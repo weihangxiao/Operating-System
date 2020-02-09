@@ -18,7 +18,7 @@ struct Tokens {
 };
 
 
-queue<Tokens> tokenlist; //store parsed tokens
+queue<Tokens> tokenlist; //store parsed tokenss
 //vector<pair<string, int>> symbolTable;
 
 
@@ -35,7 +35,7 @@ void tokenizer(string filename) {
             char *cstr = new char[line.length() + 1];
             strcpy(cstr, line.c_str());
             int loc = -1; //make sure start from the index 0 position
-            char *token = strtok(cstr, " "); //there could be '\t'
+            char *token = strtok(& line[0], " "); //there could be '\t'
 
             while (token != NULL) {
                 loc = line.find(string(token), loc + 1) + 1;
@@ -45,6 +45,7 @@ void tokenizer(string filename) {
                 tok.str = string(token);
                 tokenlist.push(tok);
                 token = strtok(NULL, " ");
+
             }
             delete[] cstr;
         }
@@ -177,13 +178,10 @@ bool parser() {
         }
 
         if (usecount > 16) {
-
-        }
-
-        for (int i = 0; i < usecount; i++) {
             parseerror(token.linecount, token.offset, 4); // too many def in module
             return false;
         }
+
 
         for (int i = 0; i < usecount; i++) {
             token = tokenlist.front();
@@ -202,6 +200,8 @@ bool parser() {
 
 
         /*********** Program Text *************/
+        token = tokenlist.front();
+        tokenlist.pop();
 
 
 

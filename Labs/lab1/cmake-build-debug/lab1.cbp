@@ -80,9 +80,6 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab1/main.cpp">
-			<Option target="lab1"/>
-		</Unit>
 		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab1/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
