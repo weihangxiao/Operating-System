@@ -1,0 +1,19 @@
+1.
+WRT to your 2nd question
+"  3   X11 6  X12 8 "
+yes you stated there are 3 symbol definitions , you provide 2 so the parser is looking
+for the 3rd one ( see the pseudo code I provided where there is a for loop ).
+Since there is no 3rd one, the error is SYM_EXPECTED
+
+2.
+symbol length 太长 超过16 报啥错
+
+3.是否可以assume symbol 后面的 relative address 是valided 不会出现 021 0002 这样的address
+
+4。 relative address exceed module size  >=
+
+5. external address exceed length of uselist 
+
+
+even an empty program should have the “Symbol Table” and “Memory Map” line
+

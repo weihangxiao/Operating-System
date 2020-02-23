@@ -11,20 +11,24 @@ using namespace std;
 
 const string NO_VALUE = "";
 
-bool newline = false;
-string line;
-int linenum = 0;
-int length;
-int offset = -1;
-string lastline;
 ifstream infile;
+istringstream is;
+
+string line;
+string lastline;
+
 int module_num = 1;
 int base_address = 0;
+int linenum;
+int length;
+int offset;
+
 bool complete = false;
 bool duplicate = false;
+bool definedbefore;
+bool newline = false;
 
 vector<pair<string, int> > symboltable;
-bool definedbefore;
 vector<int> memoryaddress;
 vector<string> uselist;
 vector<int> module;
@@ -37,6 +41,13 @@ struct Tokens {
 };
 
 
+string intToString(int num) {
+    stringstream ss;
+    ss << num;
+    string s;
+    ss >> s;
+    return s;
+}
 
 
 Tokens getToken() {
@@ -45,7 +56,8 @@ Tokens getToken() {
     if (newline) {
         lastline = line;
         getline(infile, line);
-        offset = -1;
+        is.str(line);
+        offset = 1;
         linenum++;
         if (infile.eof()) {
             int len = lastline.length();
@@ -54,33 +66,40 @@ Tokens getToken() {
             t.offset = len + 1;
 
             if (complete) {
-                t.str = "complete";
+                t.str = "EOF";
             } else {
                 t.str = NO_VALUE;
             }
 
             return t;
         }
-        token = strtok(&line[0], " \t");
-        if (token == NULL) {
+        token = strtok(&line[0], " \t\n");
+
+        if (token == NULL ) {
             newline = true;
             return getToken();
         } else {
             newline = false;
         }
     } else {
-        token = strtok(NULL, " \t");
-        //cout << string(token) << endl;
+        token = strtok(NULL, " \t\n");
         if (token == NULL) {
             newline = true;
             return getToken();
         }
     }
 
-    offset = line.find(string(token), offset + 1) + 1;
+    string str = is.str();
+    while (line.length() != 0 && (str[offset - 1] == ' ' || str[offset - 1] == '\t')) {
+        offset++;
+    }
+
+    //offset = line.find(string(token), offset + 1) + 1;
     t.linecount = linenum;
     t.offset = offset;
     t.str = string(token);
+    //cout << string(token) + ": " << intToString(offset) << endl;
+    offset = offset + string(token).length();
     return t;
 }
 
@@ -91,10 +110,10 @@ void parseerror(int linenum, int lineoffset, int errcode) {
             "NUM_EXPECTED",
             "SYM_EXPECTED",
             "ADDR_EXPECTED",
-            "SYM_TOLONG",
-            "TO_MANY_DEF_IN_MODULE",
-            "TO_MANY_USE_IN_MODULE",
-            "TO_MANY_INSTR"
+            "SYM_TOO_LONG",
+            "TOO_MANY_DEF_IN_MODULE",
+            "TOO_MANY_USE_IN_MODULE",
+            "TOO_MANY_INSTR"
     };
     printf("Parse Error line %d offset %d: %s\n", linenum, lineoffset, errstr[errcode].c_str());
 }
@@ -105,7 +124,7 @@ void parseerror(int linenum, int lineoffset, int errcode) {
 Tokens readInt() {
     Tokens token = getToken();
 
-    if (token.str == "complete") {
+    if (token.str == "EOF") {
         return token;
     }
 
@@ -114,9 +133,8 @@ Tokens readInt() {
         exit(0);
     }
 
-
     for (int i = 0; i < token.str.size(); i++) {
-        if((token.str[i]>='0' && token.str[i]<='9')==false) {
+        if(token.str[i] < '0' || token.str[i] > '9') {
             parseerror(token.linecount, token.offset, 0); //num expected
             exit(0);
         }
@@ -141,7 +159,7 @@ string readSym() {
     }
 
     if (str.length() > 16) {
-        parseerror(token.linecount, token.offset, 3); // too many def in module
+        parseerror(token.linecount, token.offset, 3); // symbol name is too long
         exit(0);
     }
 
@@ -156,7 +174,7 @@ int readInstrco() {
         exit(0);
     }
     if (count + base_address > 512) {
-        parseerror(token.linecount, token.offset, 6); // too many def in module
+        parseerror(token.linecount, token.offset, 6); // total num_intr exceed memory size
         exit(0);
     }
     return count;
@@ -182,27 +200,22 @@ string readIEAR() {
 void checkInst() {
     Tokens token = getToken();
     for (int i = 0; i < token.str.size(); i++) {
-        if((token.str[i]>='0' && token.str[i]<='9')==false) {
+        if (token.str[i] < '0' || token.str[i] > '9') {
             parseerror(token.linecount, token.offset, 0); //Addressing expected A/E/I/R
             exit(0);
         }
     }
 }
 
-string intToString(int num) {
-    stringstream ss;
-    ss << num;
-    string s;
-    ss >> s;
-    return s;
-}
-
 void pass1(string filename) {
     infile.open(filename);
+    if (infile.peek() == std::ifstream::traits_type::eof()) { //check empty file
+        return;
+    }
     while (!infile.eof()) {
         /************ define list ***********/
         Tokens deftoken = readInt();
-        if (deftoken.str == "complete") {
+        if (deftoken.str == "EOF") {
             break;
         }
         int defcount = stoi(deftoken.str);
@@ -215,21 +228,6 @@ void pass1(string filename) {
             Tokens valtoken = readInt();
             int relativeaddress = stoi(valtoken.str);
 
-//            for (int i = 0; i < symboltable.size(); i++) {
-//                string name = symboltable[i].first;
-//                if (name == sym) {
-//                    definedbefore = true;
-//                }
-
-
-//            for (auto entry: symboltable) {
-//                string name = entry.first.first;
-//                if (name == sym) {
-//                    symboltable[entry.first] = true;
-//                    duplicate = true;
-//                }
-//            }
-
 
             symboltable.push_back(make_pair(sym, relativeaddress + base_address));
             module.push_back(module_num);
@@ -241,7 +239,7 @@ void pass1(string filename) {
         Tokens usetoken = readInt();
         int usecount = stoi(usetoken.str);
         if (usecount > 16) {
-            parseerror(usetoken.linecount, usetoken.offset, 5); // too many def in module
+            parseerror(usetoken.linecount, usetoken.offset, 5); // too many use in module
             exit(0);
         }
         for (int i = 0; i < usecount; i++) {
@@ -293,6 +291,18 @@ string getCount(int count) {
 
 }
 
+string convertInst(int inst) {
+    if (inst < 10) {
+        return "000" + intToString(inst);
+    } else if (inst < 100) {
+        return "00" + intToString(inst);
+    } else if (inst < 1000) {
+        return "0" + intToString(inst);
+    }
+    return intToString(inst);
+}
+
+
 
 
 void pass2(string filename) {
@@ -304,7 +314,7 @@ void pass2(string filename) {
 
     while (!infile.eof()) {
         Tokens deftoken = readInt();
-        if (deftoken.str == "complete") {
+        if (deftoken.str == "EOF") {
             break;
         }
         int defcount = stoi(deftoken.str);
@@ -338,35 +348,35 @@ void pass2(string filename) {
             if (addressmode == "A") {
                 if (instruction >= 10000) {
                     instruction = 9999;
-                    cout << intToString(instruction) << " Error: Illegal opcode; treated as 9999" << endl;
-                } else if (operand > 512) {
-                    cout << intToString(opcode * 1000) << " Error: Absolute address exceeds machine size; zero used" << endl;
+                    cout << convertInst(instruction) << " Error: Illegal opcode; treated as 9999" << endl;
+                } else if (operand >= 512) {
+                    cout << convertInst(opcode * 1000) << " Error: Absolute address exceeds machine size; zero used" << endl;
                 } else {
-                    cout << intToString(instruction) << endl;
+                    cout << convertInst(instruction) << endl;
                 }
             } else if (addressmode == "I") {
                 if (instruction >= 10000) {
                     instruction = 9999;
-                    cout << intToString(instruction) << " Error: Illegal immediate value; treated as 9999" << endl;
+                    cout << convertInst(instruction) << " Error: Illegal immediate value; treated as 9999" << endl;
                 } else {
-                    cout << intToString(instruction) << endl;
+                    cout << convertInst(instruction) << endl;
                 }
 
             } else if (addressmode == "R") {
                 if (instruction >= 10000) {
                     instruction = 9999;
-                    cout << intToString(instruction) << " Error: Illegal opcode; treated as 9999" << endl;
-                } else if (operand > instcount) {
-                    cout << intToString(opcode * 1000 + base_address) << " Error: Relative address exceeds module size; zero used" << endl;
+                    cout << convertInst(instruction) << " Error: Illegal opcode; treated as 9999" << endl;
+                } else if (operand >= instcount) {
+                    cout << convertInst(opcode * 1000 + base_address) << " Error: Relative address exceeds module size; zero used" << endl;
                 } else {
-                    cout << intToString(instruction + base_address) << endl;
+                    cout << convertInst(instruction + base_address) << endl;
                 }
             } else if (addressmode == "E") {
                 if (instruction >= 10000) {
                     instruction = 9999;
-                    cout << intToString(instruction) << " Error: Illegal opcode; treated as 9999" << endl;
+                    cout << convertInst(instruction) << " Error: Illegal opcode; treated as 9999" << endl;
                 } else if (operand > usecount - 1) {
-                    cout << intToString(instruction) << " Error: External address exceeds length of uselist; treated as immediate" << endl;
+                    cout << convertInst(instruction) << " Error: External address exceeds length of uselist; treated as immediate" << endl;
                 } else {
                     bool usedNotDefine = true;
                     currUselist[operand].second = true;
@@ -378,9 +388,9 @@ void pass2(string filename) {
                         }
                     }
                     if (usedNotDefine) {
-                        cout << intToString(opcode * 1000) << " Error: "<< currUselist[operand].first  << " is not defined; zero used" << endl;
+                        cout << convertInst(opcode * 1000) << " Error: "<< currUselist[operand].first  << " is not defined; zero used" << endl;
                     } else {
-                        cout << intToString(opcode * 1000 + operand) << endl;
+                        cout << convertInst(opcode * 1000 + operand) << endl;
                     }
 
                 }
