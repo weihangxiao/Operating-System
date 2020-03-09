@@ -10,12 +10,13 @@
 #include <queue>
 #include <stack>
 #include <list>
-
+#include <iostream>
+using namespace std;
 class Scheduler {
 public:
     virtual void add_process(Process *p) = 0;
     virtual Process* get_next_process() = 0;
-    virtual void test_preempt(Process *p, int curtime) = 0;
+    //virtual void test_preempt(Process *p, int curtime) = 0;
 private:
 };
 
@@ -25,7 +26,7 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
-    void test_preempt(Process *p, int curtime)
+    //void test_preempt(Process *p, int curtime);
 private:
     queue<Process*> readyQueue;
 
@@ -37,7 +38,6 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
-    void test_preempt(Process *p, int curtime)
 private:
     stack<Process*> readyQueue;
 };
@@ -48,7 +48,7 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
-    void test_preempt(Process *p, int curtime)
+    void test_preempt(Process *p, int curtime);
 private:
     list<Process*> readyQueue;
 };
@@ -60,23 +60,23 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
-    void test_preempt(Process *p, int curtime)
+    void test_preempt(Process *p, int curtime);
 private:
     queue<Process*> readyQueue;
 };
 
-class PRIO_Scheduler: public Scheduler {
-public:
-    PRIO_Scheduler();
-    int quantum;
-
-    void add_process(Process *p);
-    Process* get_next_process();
-    void test_preempt(Process *p, int curtime)
-private:
-    queue<Process*> readyQueue;
-};
-
+//class PRIO_Scheduler: public Scheduler {
+//public:
+//    PRIO_Scheduler();
+//    int quantum;
+//
+//    void add_process(Process *p);
+//    Process* get_next_process();
+//    void test_preempt(Process *p, int curtime);
+//private:
+//    queue<Process*> readyQueue;
+//};
+//
 
 
 

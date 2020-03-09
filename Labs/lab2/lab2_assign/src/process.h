@@ -5,6 +5,13 @@
 #ifndef LAB2_PROCESS_H
 #define LAB2_PROCESS_H
 
+enum State {
+    CREATED,
+    READY,
+    RUNING,
+    BLOCKED,
+    PREEMPT
+};
 
 class Process {
 private:
@@ -18,23 +25,69 @@ private:
 
     int IO; //IO Burst
 
+    State from;
+    State to;
+
+    int p_cb;
+
+    int rem_tc;
+
+    int p_ib;
+
+    int prio;
+    int wait_time;
+    int rem_cb;
+    int rem_ib;
+    int curr_time;
+    //int quantum;
 public:
-    Process(int, int, int, int, int);
+    Process();
+    Process(int, int, int, int, int, State, State);
 
     void setPID(int);
     int getPID();
-    void setAT(int);
-    int getAT();
-    void setTC(int);
-    int getTC();
-    void setCB(int);
-    int getCB();
-    void setIO(int);
-    int getIO();
 
+    void setStates(State, State);
 
+    int getPCb();
 
+    int getRemTc();
 
+    int getPIb();
+
+    int getPrio();
+
+    void setPCb(int pCb);
+
+    void setRemTc(int pRem);
+
+    void setPIb(int pIb);
+
+    void setPrio(int prio);
+
+    int getRemCb();
+
+    void setRemCb(int remCb);
+
+    int getCb();
+
+    int getIo();
+
+    int getTc();
+
+    int getRemIb();
+
+    int getCurrTime();
+
+    void setCurrTime(int currTime);
+
+    int getWaitTime() const;
+
+    void setWaitTime(int waitTime);
+
+//    int getQuantum();
+//
+//    void setQuantum(int quantum);
 
 
 };

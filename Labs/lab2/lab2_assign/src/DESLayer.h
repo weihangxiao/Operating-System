@@ -5,17 +5,34 @@
 #ifndef LAB2_DESLAYER_H
 #define LAB2_DESLAYER_H
 
+#include <list>
+#include <iostream>
+#include "event.h"
+
+using namespace std;
 
 class DESLayer {
 public:
+    int expire_time;
     //constructor
-    DESLayer();
-    void createEvent(Event& e);
-    void deleteEvent();
-    void addEvent
+    void addEvent(Event* e);
+    bool empty();
+    Event* getEvent();
+    void updateProcStates(Transition, Event* e, Process* p);
+    int get_next_event_time();
+    void removeEvent();
+    list<Event*> eventQueue;
 
 
+    void printBefEvtQueue(Event* e);
 
+    string converTransition(Transition t);
+
+    void printAftEvtQueue();
+
+    int getExpireTime();
+
+    void setExpireTime(int expireTime);
 };
 
 
