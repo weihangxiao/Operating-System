@@ -34,12 +34,14 @@ private:
 
     int p_ib;
 
-    int prio;
+    int static_prio;
+    int dynamic_prio;
     int wait_time;
     int rem_cb;
     int rem_ib;
     int curr_time;
     //int quantum;
+    bool preempt;
 public:
     Process();
     Process(int, int, int, int, int, State, State);
@@ -84,6 +86,18 @@ public:
     int getWaitTime() const;
 
     void setWaitTime(int waitTime);
+
+    bool isPreempt();
+
+    void setPreempt(bool preempt);
+
+    int getStaticPrio();
+
+    void setStaticPrio(int staticPrio);
+
+    void setDynamicPrio(int prio);
+
+    int getDynamicPrio();
 
 //    int getQuantum();
 //

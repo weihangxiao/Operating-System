@@ -74,3 +74,10 @@ Process* RR_Scheduler::get_next_process() {
 }
 
 
+PRIO_Scheduler::PRIO_Scheduler() : Scheduler() {
+
+}
+
+
+
+

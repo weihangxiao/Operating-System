@@ -56,7 +56,6 @@ private:
 class RR_Scheduler: public Scheduler {
 public:
     RR_Scheduler();
-    int quantum;
 
     void add_process(Process *p);
     Process* get_next_process();
@@ -65,18 +64,17 @@ private:
     queue<Process*> readyQueue;
 };
 
-//class PRIO_Scheduler: public Scheduler {
-//public:
-//    PRIO_Scheduler();
-//    int quantum;
-//
-//    void add_process(Process *p);
-//    Process* get_next_process();
-//    void test_preempt(Process *p, int curtime);
-//private:
-//    queue<Process*> readyQueue;
-//};
-//
+class PRIO_Scheduler: public Scheduler {
+public:
+    PRIO_Scheduler();
+
+    void add_process(Process *p);
+    Process* get_next_process();
+    void test_preempt(Process *p, int curtime);
+private:
+    queue<Process*> readyQueue;
+};
+
 
 
 

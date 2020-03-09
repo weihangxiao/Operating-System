@@ -13,13 +13,14 @@ Process::Process(int pid, int at, int tc, int cb, int io, State from, State to) 
     this->from = from;
     this->to = to;
 
+    static_prio = 0;
     //state = s;
     rem_cb = cb;
     p_cb = cb;
     p_ib = io;
     rem_tc = tc;
     rem_ib = io;
-
+    preempt = false;
 }
 
 //int Process::getQuantum() {
@@ -42,12 +43,24 @@ int Process::getCurrTime() {
     return curr_time;
 }
 
+bool Process::isPreempt() {
+    return preempt;
+}
+
+void Process::setPreempt(bool preempt) {
+    Process::preempt = preempt;
+}
+
 void Process::setCurrTime(int currTime) {
     curr_time = currTime;
 }
 
 int Process::getPCb() {
     return p_cb;
+}
+
+int Process::getDynamicPrio() {
+    return dynamic_prio;
 }
 
 void Process::setPCb(int pCb) {
@@ -62,8 +75,21 @@ void Process::setPIb(int pIb) {
     p_ib = pIb;
 }
 
-void Process::setPrio(int prio) {
-    Process::prio = prio;
+void Process::setDynamicPrio(int prio) {
+    if (prio == -1) {
+        dynamic_prio = static_prio - 1;
+    } else {
+        Process::dynamic_prio = prio;
+    }
+
+}
+
+int Process::getStaticPrio() {
+    return static_prio;
+}
+
+void Process::setStaticPrio(int staticPrio) {
+    static_prio = staticPrio;
 }
 
 int Process::getRemTc() {

@@ -118,11 +118,15 @@ void printTrace(Transition t, Event* e, Process* p, int burst) {
             break;
         case READY_TO_RUNING:
             printf("%d %d %d: READY -> RUNING  cb=%d rem=%d prio=%d\n", e->getEvtTimestamp(),
-                   e->getEvtProcess(), p->getWaitTime(), burst, p->getRemTc(), p->getPrio());
+                   e->getEvtProcess(), p->getWaitTime(), burst, p->getRemTc(), p->getDynamicPrio());
             break;
         case BLOCKED_TO_READY:
             printf("%d %d %d: BLOCK -> READY\n", e->getEvtTimestamp(),
                    e->getEvtProcess(), burst);
+            break;
+        case RUNING_TO_READY:
+            printf("%d %d %d: RUNING -> READY  cb=%d rem=%d prio=%d\n", e->getEvtTimestamp(),
+                   e->getEvtProcess(), p->getPCb(), p->getRemCb(), p->getRemTc(), p->getDynamicPrio());
             break;
         case DONE:
             printf("%d %d %d: Done\n", e->getEvtTimestamp(),
@@ -142,7 +146,8 @@ void initScheduler() {
         scheduler = new SRTF_Scheduler();
     } else if (s_value == "R") {
         scheduler = new RR_Scheduler();
-        cout << "RR Scheduler Created Successfully" << endl;
+    } else if (s_value == "P") {
+        scheduler = new PRIO_Scheduler();
     }
 
 }
@@ -160,6 +165,7 @@ int main(int argc, char* argv[]) {
     bool call_scheduler = false;
     int curr_time;
     bool proc_running = false;
+    bool preempted = false;
     if (!parseCommand(argc, argv)) {
         exit(0);
     }
@@ -172,7 +178,8 @@ int main(int argc, char* argv[]) {
 
     for (int i = 0; i < proc_queue.size(); i++) {
         Process* p = proc_queue.at(i);
-        p->setPrio(myRandom(maxprio, ofs));
+        p->setStaticPrio(myRandom(maxprio, ofs));
+        p->setDynamicPrio(p->getStaticPrio() - 1);
         ofs++;
     }
 
@@ -225,24 +232,37 @@ int main(int argc, char* argv[]) {
                 ofs++;
                 break;
             case READY_TO_RUNING:
-                cb = myRandom(rem_cb, ofs);
                 proc_running = true;
-                //Check if the scheduler is RR
-                if (s_value == "R") {
-                    if (quantum <= cb) {
-                        if (remain_tc <= quantum) {
-                            cb = remain_tc;
-                            e = new Event(curr_time + cb, pid, RUNING_TO_BLOCKED);
-                        } else {
-                            cb = quantum;
-                            e = new Event(curr_time + cb, pid, RUNING_TO_READY);
+
+                if (proc->isPreempt()) {
+                    cb = rem_cb;
+                } else {
+                    cb = myRandom(proc->getCb(), ofs);
+//                    cout << std::to_string(ofs) << endl;
+                    ofs++;
+                }
+                if (v_flag == 1) printTrace(event->getTransition(), event, proc, cb);
+                if (quantum <= cb) {
+                    if (remain_tc <= quantum) {
+                        proc->setRemCb(cb - remain_tc);
+                        proc->setRemTc(0);
+                        e = new Event(curr_time + remain_tc, pid, RUNING_TO_BLOCKED);
+                        proc->setPCb(cb);
+                        des->setExpireTime(curr_time + remain_tc);
+                        proc->setPreempt(false);
+                    } else {   // remain_tc > quantum
+                        proc->setRemCb(cb - quantum);
+                        if (cb - quantum == 0) {
+                            e = new Event(curr_time + quantum, pid, RUNING_TO_BLOCKED);
+                            preempted = false;
+                            proc->setPreempt(false);
+                        } else {   // cb  > quantum
+                            e = new Event(curr_time + quantum, pid, RUNING_TO_READY);
+                            proc->setPreempt(true);
                         }
-                    } else {  //quantum > cb,
-                        if (remain_tc <= cb) {
-                            cb = remain_tc;
-                        }
-                        e = new Event(curr_time + cb, pid, RUNING_TO_BLOCKED);
-                        e->setProcStates(RUNING_TO_BLOCKED, proc);
+                        des->setExpireTime(curr_time + quantum);
+                        proc->setRemTc(remain_tc - quantum);
+                        proc->setPCb(quantum);
                     }
                 } else {
                     if (remain_tc <= cb) {
@@ -250,13 +270,15 @@ int main(int argc, char* argv[]) {
                     }
                     e = new Event(curr_time + cb, pid, RUNING_TO_BLOCKED);
                     e->setProcStates(RUNING_TO_BLOCKED, proc);
+                    proc->setPCb(cb);
+                    proc->setRemCb(rem_cb - cb);
+                    proc->setRemTc(remain_tc - cb);
+                    des->setExpireTime(curr_time + cb);
+                    proc->setPreempt(false);
                 }
 
 
-                if (v_flag == 1) printTrace(event->getTransition(), event, proc, cb);
-                proc->setPCb(cb);
                //proc->setRemCb(rem_cb - cb);
-                des->setExpireTime(curr_time + cb);
                 if (e_flag == 1) {
                     des->printBefEvtQueue(e);
                     des->addEvent(e);
@@ -264,9 +286,7 @@ int main(int argc, char* argv[]) {
                 } else {
                     des->addEvent(e);
                 }
-                proc->setRemTc(rem_tc - cb);
 //                cout << std::to_string(proc.getPRem()) << endl;
-                ofs++;
                 break;
             case BLOCKED_TO_READY:
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, proc->getPIb());

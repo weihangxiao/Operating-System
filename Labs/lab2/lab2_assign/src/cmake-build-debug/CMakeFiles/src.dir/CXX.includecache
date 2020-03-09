@@ -8,11 +8,19 @@
 
 ../process.h
 
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/DESLayer.cpp
+DESLayer.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/DESLayer.h
+
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/DESLayer.h
 list
 -
 iostream
 -
+event.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/event.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/event.cpp
 event.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/event.h
 
@@ -39,6 +47,16 @@ DESLayer.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/DESLayer.h
 event.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/event.h
+scheduler.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/scheduler.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/process.cpp
+process.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/process.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/process.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/scheduler.cpp
 scheduler.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/scheduler.h
 
