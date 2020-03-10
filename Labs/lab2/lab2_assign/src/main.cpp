@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 
     initScheduler();
     Event* event;
-
+    Process* current_running;
     while ((event = des -> getEvent())) {
         //Event* event =  (des->getEvent());
         Process* proc = proc_queue.at(event->getEvtProcess());
@@ -196,7 +196,6 @@ int main(int argc, char* argv[]) {
         int rem_cb = proc->getRemCb();
         int rem_ib = proc->getRemIb();
         int remain_tc = proc->getRemTc();
-        int dynamic_prio = proc->getDynamicPrio();
         //int time_prev_state = curr_time - proc
         des->removeEvent();
         Event* e;
@@ -234,11 +233,12 @@ int main(int argc, char* argv[]) {
                 break;
             case READY_TO_RUNING:
                 proc_running = true;
-
+                current_running = proc;
                 if (proc->isPreempt()) {
                     cb = rem_cb;
                 } else {
                     cb = myRandom(proc->getCb(), ofs);
+                    //cout <<"ofs " + std::to_string(ofs) << endl;
                     ofs++;
                 }
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, cb);
@@ -269,6 +269,7 @@ int main(int argc, char* argv[]) {
                         cb = remain_tc;
                     }
                     e = new Event(curr_time + cb, pid, RUNING_TO_BLOCKED);
+
                     e->setProcStates(RUNING_TO_BLOCKED, proc);
                     proc->setPCb(cb);
                     proc->setRemCb(rem_cb - cb);
@@ -278,10 +279,8 @@ int main(int argc, char* argv[]) {
                 }
 
                 if (s_value == "P") {
-                    if (proc->isPreempt()) {
-                        proc->setDynamicPrio(dynamic_prio - 1);
+                        proc->setDynamicPrio(proc->getDynamicPrio() - 1);
                         //scheduler->test_preempt(proc, curr_time);
-                    }
                 }
 
                //proc->setRemCb(rem_cb - cb);
@@ -297,6 +296,7 @@ int main(int argc, char* argv[]) {
             case BLOCKED_TO_READY:
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, proc->getPIb());
                 proc->setCurrTime(curr_time);
+                proc->setDynamicPrio(proc->getStaticPrio() - 1); //when a process return from I/O reset
                 scheduler->add_process(proc);
                 call_scheduler = true;
                 break;
@@ -318,6 +318,10 @@ int main(int argc, char* argv[]) {
         if (curr_time >= des->getExpireTime()) {
             proc_running = false;
             des->setExpireTime(0);
+        } else {
+            if (s_value == "E") {
+                if ()
+            }
         }
 
         if (call_scheduler) {

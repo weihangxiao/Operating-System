@@ -76,19 +76,34 @@ private:
 class PRIO_Scheduler: public Scheduler {
 public:
     PRIO_Scheduler(int);
-    int max_prio;
     void add_process(Process *p);
     Process* get_next_process();
     //void updateProcQueue(Process *p, int prio);
     //void addExpiredQ(Process* p);
     void test_preempt(Process *p, int curtime);
     bool checkEmpty();
-    void swithQueue(queue<Process*> **active, queue<Process*> **expire);
+    void swithQueue(queue<Process*> *active, queue<Process*> *expire);
 private:
-    queue<Process*> *activeQueue = new queue<Process*>[max_prio];
-    queue<Process*> *expireQueue = new queue<Process*>[max_prio];
+     int max_prio;
+    queue<Process*> *activeQueue;
+    queue<Process*> *expireQueue;
 
 };
+
+class E_Scheduler: public Scheduler {
+public:
+    E_Scheduler(int);
+    void add_process(Process *p);
+    Process* get_next_process();
+    void test_preempt(Process *p, int curtime);
+    bool checkEmpty();
+private:
+    int max_prio;
+    queue<Process*> *activeQueue;
+    queue<Process*> *expireQueue;
+
+};
+
 
 
 
