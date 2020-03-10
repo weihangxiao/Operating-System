@@ -126,7 +126,7 @@ void printTrace(Transition t, Event* e, Process* p, int burst) {
             break;
         case RUNING_TO_READY:
             printf("%d %d %d: RUNING -> READY  cb=%d rem=%d prio=%d\n", e->getEvtTimestamp(),
-                   e->getEvtProcess(), p->getPCb(), p->getRemCb(), p->getRemTc(), p->getDynamicPrio());
+                   e->getEvtProcess(), p->getPCb(), p->getRemCb(), p->getRemTc(), p->getDynamicPrio() + 1);
             break;
         case DONE:
             printf("%d %d %d: Done\n", e->getEvtTimestamp(),
@@ -147,7 +147,7 @@ void initScheduler() {
     } else if (s_value == "R") {
         scheduler = new RR_Scheduler();
     } else if (s_value == "P") {
-        scheduler = new PRIO_Scheduler();
+        scheduler = new PRIO_Scheduler(maxprio);
     }
 
 }
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
     initScheduler();
     Event* event;
 
-    while (event = des -> getEvent()) {
+    while ((event = des -> getEvent())) {
         //Event* event =  (des->getEvent());
         Process* proc = proc_queue.at(event->getEvtProcess());
         //cout << std::to_string(event->getEvtTimestamp()) << endl;
@@ -196,6 +196,7 @@ int main(int argc, char* argv[]) {
         int rem_cb = proc->getRemCb();
         int rem_ib = proc->getRemIb();
         int remain_tc = proc->getRemTc();
+        int dynamic_prio = proc->getDynamicPrio();
         //int time_prev_state = curr_time - proc
         des->removeEvent();
         Event* e;
@@ -238,7 +239,6 @@ int main(int argc, char* argv[]) {
                     cb = rem_cb;
                 } else {
                     cb = myRandom(proc->getCb(), ofs);
-//                    cout << std::to_string(ofs) << endl;
                     ofs++;
                 }
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, cb);
@@ -277,6 +277,12 @@ int main(int argc, char* argv[]) {
                     proc->setPreempt(false);
                 }
 
+                if (s_value == "P") {
+                    if (proc->isPreempt()) {
+                        proc->setDynamicPrio(dynamic_prio - 1);
+                        //scheduler->test_preempt(proc, curr_time);
+                    }
+                }
 
                //proc->setRemCb(rem_cb - cb);
                 if (e_flag == 1) {

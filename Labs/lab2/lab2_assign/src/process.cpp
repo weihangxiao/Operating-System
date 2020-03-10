@@ -76,12 +76,7 @@ void Process::setPIb(int pIb) {
 }
 
 void Process::setDynamicPrio(int prio) {
-    if (prio == -1) {
-        dynamic_prio = static_prio - 1;
-    } else {
         Process::dynamic_prio = prio;
-    }
-
 }
 
 int Process::getStaticPrio() {
@@ -104,9 +99,7 @@ int Process::getRemIb() {
     return rem_ib;
 }
 
-int Process::getPrio() {
-    return prio;
-}
+
 
 int Process::getTc() {
     return TC;

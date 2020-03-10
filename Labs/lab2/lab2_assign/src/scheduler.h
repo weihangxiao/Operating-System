@@ -16,8 +16,7 @@ class Scheduler {
 public:
     virtual void add_process(Process *p) = 0;
     virtual Process* get_next_process() = 0;
-    //virtual void test_preempt(Process *p, int curtime) = 0;
-private:
+    virtual void test_preempt(Process *p, int curtime) = 0;
 };
 
 class FCFS_Scheduler: public Scheduler {
@@ -26,7 +25,10 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
-    //void test_preempt(Process *p, int curtime);
+    void test_preempt(Process *p, int curtime) {
+
+    }
+
 private:
     queue<Process*> readyQueue;
 
@@ -38,6 +40,10 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
+    void test_preempt(Process *p, int curtime) {
+
+    }
+
 private:
     stack<Process*> readyQueue;
 };
@@ -48,7 +54,10 @@ public:
 
     void add_process(Process *p);
     Process* get_next_process();
-    void test_preempt(Process *p, int curtime);
+    void test_preempt(Process *p, int curtime) {
+
+    }
+
 private:
     list<Process*> readyQueue;
 };
@@ -66,13 +75,19 @@ private:
 
 class PRIO_Scheduler: public Scheduler {
 public:
-    PRIO_Scheduler();
-
+    PRIO_Scheduler(int);
+    int max_prio;
     void add_process(Process *p);
     Process* get_next_process();
+    //void updateProcQueue(Process *p, int prio);
+    //void addExpiredQ(Process* p);
     void test_preempt(Process *p, int curtime);
+    bool checkEmpty();
+    void swithQueue(queue<Process*> **active, queue<Process*> **expire);
 private:
-    queue<Process*> readyQueue;
+    queue<Process*> *activeQueue = new queue<Process*>[max_prio];
+    queue<Process*> *expireQueue = new queue<Process*>[max_prio];
+
 };
 
 
