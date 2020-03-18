@@ -126,7 +126,7 @@ void printTrace(Transition t, Event* e, Process* p, int burst) {
             break;
         case RUNING_TO_READY:
             printf("%d %d %d: RUNING -> READY  cb=%d rem=%d prio=%d\n", e->getEvtTimestamp(),
-                   e->getEvtProcess(), p->getPCb(), p->getRemCb(), p->getRemTc(), p->getDynamicPrio() + 1);
+                   e->getEvtProcess(), p->getPCb(), p->getRemCb(), p->getRemTc(), p->getDynamicPrio());
             break;
         case DONE:
             printf("%d %d %d: Done\n", e->getEvtTimestamp(),
@@ -148,6 +148,8 @@ void initScheduler() {
         scheduler = new RR_Scheduler();
     } else if (s_value == "P") {
         scheduler = new PRIO_Scheduler(maxprio);
+    } else if (s_value == "E") {
+        scheduler = new E_Scheduler(maxprio);
     }
 
 }
@@ -247,7 +249,7 @@ int main(int argc, char* argv[]) {
                         proc->setRemCb(cb - remain_tc);
                         proc->setRemTc(0);
                         e = new Event(curr_time + remain_tc, pid, RUNING_TO_BLOCKED);
-                        proc->setPCb(cb);
+                        proc->setPCb(remain_tc);
                         des->setExpireTime(curr_time + remain_tc);
                         proc->setPreempt(false);
                     } else {   // remain_tc > quantum
@@ -278,11 +280,11 @@ int main(int argc, char* argv[]) {
                     proc->setPreempt(false);
                 }
 
-                if (s_value == "P") {
-                        proc->setDynamicPrio(proc->getDynamicPrio() - 1);
-                        //scheduler->test_preempt(proc, curr_time);
-                }
-
+//                if (s_value == "P") {
+//                        proc->setDynamicPrio(proc->getDynamicPrio() - 1);
+//                        //scheduler->test_preempt(proc, curr_time);
+//                }
+                proc->setCurrTime(curr_time);
                //proc->setRemCb(rem_cb - cb);
                 if (e_flag == 1) {
                     des->printBefEvtQueue(e);
@@ -302,6 +304,7 @@ int main(int argc, char* argv[]) {
                 break;
             case RUNING_TO_READY:
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, proc->getPCb());
+                if (s_value == "E" || s_value == "P") proc->setDynamicPrio(proc->getDynamicPrio() - 1);
                 proc->setCurrTime(curr_time);
                 scheduler->add_process(proc);
                 call_scheduler = true;
@@ -317,10 +320,36 @@ int main(int argc, char* argv[]) {
         //if the current process is still running
         if (curr_time >= des->getExpireTime()) {
             proc_running = false;
+            current_running = nullptr;
             des->setExpireTime(0);
         } else {
-            if (s_value == "E") {
-                if ()
+            if (s_value == "E" && (curr == BLOCKED_TO_READY || curr == CREATED_TO_READY)) {
+                Event* nextEvt = des->getEventById(current_running->getPID());
+                if (proc->getDynamicPrio() > current_running->getDynamicPrio() &&
+                    nextEvt->getEvtTimestamp() > curr_time) {
+                    cout << "sss " + std::to_string(nextEvt->getEvtTimestamp()) << endl;
+                    printf("----> PRIO preemption %d by %d ? 1 TS=%d now=%d) --> YES\n", current_running->getPID(),
+                            proc->getPID(), nextEvt->getEvtTimestamp(), curr_time);
+                    des->remove(nextEvt);
+                    e = new Event(curr_time, current_running->getPID(), RUNING_TO_READY);
+                    int actual_cb = curr_time - current_running->getCurrTime();
+                    int original_cb = current_running->getRemCb() + current_running->getPCb();
+                    current_running->setRemCb(original_cb - actual_cb);
+                    current_running->setRemTc(current_running->getRemTc() + current_running->getPCb() - actual_cb);
+                    current_running->setWaitTime(curr_time - current_running->getCurrTime());
+                    current_running->setPCb(actual_cb);
+                    current_running->setPreempt(true);
+                    if (e_flag == 1) {
+                        des->printBefEvtQueue(e);
+                        des->addEvent(e);
+                        des->printAftEvtQueue();
+                    } else {
+                        des->addEvent(e);
+                    }
+                    current_running = nullptr;
+                    des->setExpireTime(0);
+                    proc_running = false;
+                }
             }
         }
 
@@ -349,6 +378,10 @@ int main(int argc, char* argv[]) {
             }
         }
     }
+
+    double turn_around = 0.0;
+    doublie cpu_waiting = 0.0;
+
 
 
 

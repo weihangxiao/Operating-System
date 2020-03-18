@@ -33,6 +33,9 @@ public:
     int getExpireTime();
 
     void setExpireTime(int expireTime);
+
+    Event* getEventById(int);
+    void remove(Event* e);
 };
 
 

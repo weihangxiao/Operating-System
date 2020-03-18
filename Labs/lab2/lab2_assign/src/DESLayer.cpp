@@ -114,3 +114,15 @@ void DESLayer::removeEvent() {
     eventQueue.erase(eventQueue.begin());
 }
 
+Event* DESLayer::getEventById(int id) {
+    list<Event*>::iterator it;
+    for (it = eventQueue.begin(); !eventQueue.empty() && it != eventQueue.end(); ++it) {
+        if ((*it)->getEvtProcess() == id) {
+            return *it;
+        }
+    }
+}
+
+void DESLayer::remove(Event *e) {
+    eventQueue.remove(e);
+}
