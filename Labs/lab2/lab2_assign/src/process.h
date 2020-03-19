@@ -34,14 +34,19 @@ private:
 
     int p_ib;
 
+    int cw; //cpu_waiting_time
+
     int static_prio;
     int dynamic_prio;
     int wait_time;
     int rem_cb;
     int rem_ib;
     int curr_time;
+    int total_cb;
     //int quantum;
     bool preempt;
+    int IT; //I/O time
+    int finish_time;
 public:
     Process();
     Process(int, int, int, int, int, State, State);
@@ -98,6 +103,26 @@ public:
     void setDynamicPrio(int prio);
 
     int getDynamicPrio();
+
+    int getFinishTime();
+
+    void setFinishTime(int finishTime);
+
+    int getAt();
+
+    void setAt(int at);
+
+    int getIt();
+
+    void setIt(int it);
+
+    int getTotalCb();
+
+    void setTotalCb(int totalCb);
+
+    int getCw() const;
+
+    void setCw(int cw);
 
 //    int getQuantum();
 //

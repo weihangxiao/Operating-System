@@ -23,6 +23,46 @@ Process::Process(int pid, int at, int tc, int cb, int io, State from, State to) 
     preempt = false;
 }
 
+int Process::getCw() const {
+    return cw;
+}
+
+void Process::setCw(int cw) {
+    Process::cw = cw;
+}
+
+int Process::getTotalCb() {
+    return total_cb;
+}
+
+void Process::setTotalCb(int totalCb) {
+    total_cb = totalCb;
+}
+
+int Process::getIt() {
+    return IT;
+}
+
+void Process::setIt(int it) {
+    IT = it;
+}
+
+int Process::getAt() {
+    return AT;
+}
+
+void Process::setAt(int at) {
+    AT = at;
+}
+
+int Process::getFinishTime() {
+    return finish_time;
+}
+
+void Process::setFinishTime(int finishTime) {
+    finish_time = finishTime;
+}
+
 //int Process::getQuantum() {
 //    return quantum;
 //}

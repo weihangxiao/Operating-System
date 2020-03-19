@@ -23,6 +23,7 @@ int quantum = 10000;
 int maxprio = 4;
 DESLayer* des = new DESLayer();
 Scheduler* scheduler;
+string scheduler_name;
 
 bool parseCommand(int argc, char* argv[]) {
     int c = 0;
@@ -56,10 +57,9 @@ bool parseCommand(int argc, char* argv[]) {
                              optopt);
                 return false;
             default:
-                abort();
+                break;
         }
     }
-
     return true;
 }
 
@@ -139,16 +139,22 @@ void printTrace(Transition t, Event* e, Process* p, int burst) {
 
 void initScheduler() {
     if (s_value == "F") {
+        scheduler_name = "FCFS";
         scheduler = new FCFS_Scheduler();
     } else if (s_value == "L") {
+        scheduler_name = "LCFS";
         scheduler = new LCFS_Scheduler();
     } else if (s_value == "S") {
+        scheduler_name = "SRTF";
         scheduler = new SRTF_Scheduler();
     } else if (s_value == "R") {
+        scheduler_name = "RR";
         scheduler = new RR_Scheduler();
     } else if (s_value == "P") {
+        scheduler_name = "PRIO";
         scheduler = new PRIO_Scheduler(maxprio);
     } else if (s_value == "E") {
+        scheduler_name = "PREPRIO";
         scheduler = new E_Scheduler(maxprio);
     }
 
@@ -166,8 +172,13 @@ int main(int argc, char* argv[]) {
     int cb;
     bool call_scheduler = false;
     int curr_time;
+    int io_count; //how many process wait io;
+    bool io_status = false;
+    int io_begin;
+    double total_io_time = 0.0;
     bool proc_running = false;
     bool preempted = false;
+    double cpu_wait_time = 0.0;
     if (!parseCommand(argc, argv)) {
         exit(0);
     }
@@ -211,16 +222,23 @@ int main(int argc, char* argv[]) {
                 break;
             case RUNING_TO_BLOCKED:
                 if (proc->getRemTc() == 0) {
+                    proc->setFinishTime(event->getEvtTimestamp());
                     if (v_flag == 1) {
                         printTrace(DONE, event, proc, 0);
-                        call_scheduler = true;
-                        break;
                     }
+                    call_scheduler = true;
+                    break;
                 }
 
+                if (!io_status) {
+                    io_status = true;
+                    io_begin = curr_time;
+                }
+                io_count++;
                 ib = myRandom(rem_ib, ofs);
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, ib);
                 proc->setPIb(ib);
+                proc->setIt(proc->getIt() + ib);
                 e = new Event(curr_time + ib, pid, BLOCKED_TO_READY);
                 if (e_flag == 1) {
                     des->printBefEvtQueue(e);
@@ -250,6 +268,7 @@ int main(int argc, char* argv[]) {
                         proc->setRemTc(0);
                         e = new Event(curr_time + remain_tc, pid, RUNING_TO_BLOCKED);
                         proc->setPCb(remain_tc);
+                        proc->setTotalCb(proc->getTotalCb() + remain_tc);
                         des->setExpireTime(curr_time + remain_tc);
                         proc->setPreempt(false);
                     } else {   // remain_tc > quantum
@@ -265,6 +284,7 @@ int main(int argc, char* argv[]) {
                         des->setExpireTime(curr_time + quantum);
                         proc->setRemTc(remain_tc - quantum);
                         proc->setPCb(quantum);
+                        proc->setTotalCb(proc->getTotalCb() + quantum);
                     }
                 } else {
                     if (remain_tc <= cb) {
@@ -274,7 +294,8 @@ int main(int argc, char* argv[]) {
 
                     e->setProcStates(RUNING_TO_BLOCKED, proc);
                     proc->setPCb(cb);
-                    proc->setRemCb(rem_cb - cb);
+                    proc->setTotalCb(proc->getTotalCb() + cb);
+                    proc->setRemCb(0);
                     proc->setRemTc(remain_tc - cb);
                     des->setExpireTime(curr_time + cb);
                     proc->setPreempt(false);
@@ -297,6 +318,12 @@ int main(int argc, char* argv[]) {
                 break;
             case BLOCKED_TO_READY:
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, proc->getPIb());
+                io_count--;
+                if (io_count == 0) {
+                    io_status = false;
+                    total_io_time += curr_time - io_begin;
+                }
+
                 proc->setCurrTime(curr_time);
                 proc->setDynamicPrio(proc->getStaticPrio() - 1); //when a process return from I/O reset
                 scheduler->add_process(proc);
@@ -327,9 +354,11 @@ int main(int argc, char* argv[]) {
                 Event* nextEvt = des->getEventById(current_running->getPID());
                 if (proc->getDynamicPrio() > current_running->getDynamicPrio() &&
                     nextEvt->getEvtTimestamp() > curr_time) {
-                    cout << "sss " + std::to_string(nextEvt->getEvtTimestamp()) << endl;
-                    printf("----> PRIO preemption %d by %d ? 1 TS=%d now=%d) --> YES\n", current_running->getPID(),
-                            proc->getPID(), nextEvt->getEvtTimestamp(), curr_time);
+                    //cout << "sss " + std::to_string(nextEvt->getEvtTimestamp()) << endl;
+                    if (e_flag == 1) {
+                        printf("----> PRIO preemption %d by %d ? 1 TS=%d now=%d) --> YES\n", current_running->getPID(),
+                               proc->getPID(), nextEvt->getEvtTimestamp(), curr_time);
+                    }
                     des->remove(nextEvt);
                     e = new Event(curr_time, current_running->getPID(), RUNING_TO_READY);
                     int actual_cb = curr_time - current_running->getCurrTime();
@@ -337,7 +366,9 @@ int main(int argc, char* argv[]) {
                     current_running->setRemCb(original_cb - actual_cb);
                     current_running->setRemTc(current_running->getRemTc() + current_running->getPCb() - actual_cb);
                     current_running->setWaitTime(curr_time - current_running->getCurrTime());
+                    //current_running->setCw(current_running->getCw() + current_running->getWaitTime());
                     current_running->setPCb(actual_cb);
+                    current_running->setTotalCb(current_running->getTotalCb() - current_running->getPCb() + actual_cb);
                     current_running->setPreempt(true);
                     if (e_flag == 1) {
                         des->printBefEvtQueue(e);
@@ -366,6 +397,7 @@ int main(int argc, char* argv[]) {
 
                 e = new Event(curr_time, cur_running_proc->getPID(), READY_TO_RUNING);
                 cur_running_proc->setWaitTime(curr_time - cur_running_proc->getCurrTime());
+                cur_running_proc->setCw(cur_running_proc->getCw() + cur_running_proc->getWaitTime());
                 if (e_flag == 1) {
                     des->printBefEvtQueue(e);
                     des->addEvent(e);
@@ -379,11 +411,37 @@ int main(int argc, char* argv[]) {
         }
     }
 
+
+    int last_finish_itme = 0;
     double turn_around = 0.0;
-    doublie cpu_waiting = 0.0;
-
-
-
+    double cpu_waiting_time = 0.0;
+    double cpu_utilization = 0.0;
+    cout << scheduler_name;
+    if (scheduler_name == "RR" || scheduler_name == "PRIO" || scheduler_name == "PREPRIO") {
+        cout << " " + std::to_string(quantum);
+    }
+    cout << endl;
+    for (int i = 0; i < proc_queue.size(); i++) {
+        Process* p = proc_queue[i];
+        int TT = p->getFinishTime() - p->getAt();
+        //int cpu_wait = TT - p->getTotalCb();
+        printf("%04d: %4d %4d %4d %4d %1d | %5d %5d %5d %5d\n",
+                p->getPID(), p->getAt(), p->getTc(), p->getCb(), p->getIo(), p->getStaticPrio(),
+                p->getFinishTime(), TT, p->getIt(), p->getCw());
+        if (p->getFinishTime() > last_finish_itme) {
+            last_finish_itme = p->getFinishTime();
+        }
+        turn_around += TT;
+        cpu_waiting_time += p->getCw();
+        cpu_utilization += p->getTc();
+    }
+    printf("SUM: %d %.2lf %.2lf %.2lf %.2lf %.3lf\n",
+            last_finish_itme,
+            cpu_utilization * 100/ last_finish_itme,
+            total_io_time * 100/ last_finish_itme,
+            turn_around / proc_queue.size(),
+            cpu_waiting_time / proc_queue.size(),
+           proc_queue.size()*1.0 * 100/last_finish_itme);
 
 
 //    printf ("v_flag = %d, t_flag = %d, e_flag = %d, s_value = %s\n",
