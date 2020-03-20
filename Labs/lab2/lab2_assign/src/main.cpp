@@ -103,7 +103,7 @@ void parseRfile(string filename) {
 
 
 int myRandom(int burst, int ofs) {
-    return 1 + (rand_vals[ofs] % burst);
+    return 1 + (rand_vals[ofs % number] % burst);
 }
 
 void printTrace(Transition t, Event* e, Process* p, int burst) {
