@@ -121,6 +121,7 @@ Event* DESLayer::getEventById(int id) {
             return *it;
         }
     }
+    return nullptr;
 }
 
 void DESLayer::remove(Event *e) {

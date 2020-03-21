@@ -11,6 +11,7 @@
 #include "DESLayer.h"
 #include "event.h"
 #include "scheduler.h"
+#include "process.h"
 
 using namespace std;
 
@@ -168,13 +169,13 @@ void initScheduler() {
 
 int main(int argc, char* argv[]) {
     int ofs = 0;
-    int ib;
-    int cb;
+    int ib = 0;
+    int cb = 0;
     bool call_scheduler = false;
-    int curr_time;
-    int io_count; //how many process wait io;
+    int curr_time = 0;
+    int io_count = 0; //how many process wait io;
     bool io_status = false;
-    int io_begin;
+    int io_begin = 0;
     double total_io_time = 0.0;
     bool proc_running = false;
     bool preempted = false;
@@ -183,7 +184,7 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 //    printf("%d, %d\n", quantum, maxprio);
-    string input = argv[argc - 2];
+    string input = argv[argc -2];
     string rfile = argv[argc - 1];
 
     parseInput(input);
@@ -199,8 +200,8 @@ int main(int argc, char* argv[]) {
     initScheduler();
     Event* event;
     Process* current_running;
-    while ((event = des -> getEvent())) {
-        //Event* event =  (des->getEvent());
+    while (!des->empty()) {
+        event =  (des->getEvent());
         Process* proc = proc_queue.at(event->getEvtProcess());
         //cout << std::to_string(event->getEvtTimestamp()) << endl;
         curr_time = event->getEvtTimestamp();
@@ -209,7 +210,7 @@ int main(int argc, char* argv[]) {
         int rem_cb = proc->getRemCb();
         int rem_ib = proc->getRemIb();
         int remain_tc = proc->getRemTc();
-        //int time_prev_state = curr_time - proc
+        //intme_prev_state = curr_time - proc
         des->removeEvent();
         Event* e;
         Transition curr = event->getTransition();
@@ -318,10 +319,10 @@ int main(int argc, char* argv[]) {
                 break;
             case BLOCKED_TO_READY:
                 if (v_flag == 1) printTrace(event->getTransition(), event, proc, proc->getPIb());
-                io_count--;
+                io_count = io_count - 1;
                 if (io_count == 0) {
                     io_status = false;
-                    total_io_time += curr_time - io_begin;
+                    total_io_time += (curr_time - io_begin) * 1.0;
                 }
 
                 proc->setCurrTime(curr_time);

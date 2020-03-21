@@ -5,7 +5,7 @@
 #ifndef LAB2_EVENT_H
 #define LAB2_EVENT_H
 
-#include <process.h>
+#include "process.h"
 
 enum Transition {
     CREATED_TO_READY,
