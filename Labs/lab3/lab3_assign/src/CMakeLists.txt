@@ -3,4 +3,4 @@ project(src)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(src main.cpp process.cpp process.h PTE.h Pager_Algo.cpp Pager_Algo.h frame.cpp frame.h)
+add_executable(src main.cpp process.cpp process.h PTE.h frame.cpp frame.h pager_algo.cpp pager_algo.h page_fault_handler.cpp page_fault_handler.h)

@@ -123,33 +123,6 @@ src/fast:
 	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/build
 .PHONY : src/fast
 
-Pager_Algo.o: Pager_Algo.cpp.o
-
-.PHONY : Pager_Algo.o
-
-# target to build an object file
-Pager_Algo.cpp.o:
-	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/Pager_Algo.cpp.o
-.PHONY : Pager_Algo.cpp.o
-
-Pager_Algo.i: Pager_Algo.cpp.i
-
-.PHONY : Pager_Algo.i
-
-# target to preprocess a source file
-Pager_Algo.cpp.i:
-	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/Pager_Algo.cpp.i
-.PHONY : Pager_Algo.cpp.i
-
-Pager_Algo.s: Pager_Algo.cpp.s
-
-.PHONY : Pager_Algo.s
-
-# target to generate assembly for a file
-Pager_Algo.cpp.s:
-	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/Pager_Algo.cpp.s
-.PHONY : Pager_Algo.cpp.s
-
 frame.o: frame.cpp.o
 
 .PHONY : frame.o
@@ -204,6 +177,60 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+page_fault_handler.o: page_fault_handler.cpp.o
+
+.PHONY : page_fault_handler.o
+
+# target to build an object file
+page_fault_handler.cpp.o:
+	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/page_fault_handler.cpp.o
+.PHONY : page_fault_handler.cpp.o
+
+page_fault_handler.i: page_fault_handler.cpp.i
+
+.PHONY : page_fault_handler.i
+
+# target to preprocess a source file
+page_fault_handler.cpp.i:
+	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/page_fault_handler.cpp.i
+.PHONY : page_fault_handler.cpp.i
+
+page_fault_handler.s: page_fault_handler.cpp.s
+
+.PHONY : page_fault_handler.s
+
+# target to generate assembly for a file
+page_fault_handler.cpp.s:
+	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/page_fault_handler.cpp.s
+.PHONY : page_fault_handler.cpp.s
+
+pager_algo.o: pager_algo.cpp.o
+
+.PHONY : pager_algo.o
+
+# target to build an object file
+pager_algo.cpp.o:
+	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/pager_algo.cpp.o
+.PHONY : pager_algo.cpp.o
+
+pager_algo.i: pager_algo.cpp.i
+
+.PHONY : pager_algo.i
+
+# target to preprocess a source file
+pager_algo.cpp.i:
+	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/pager_algo.cpp.i
+.PHONY : pager_algo.cpp.i
+
+pager_algo.s: pager_algo.cpp.s
+
+.PHONY : pager_algo.s
+
+# target to generate assembly for a file
+pager_algo.cpp.s:
+	$(MAKE) -f CMakeFiles/src.dir/build.make CMakeFiles/src.dir/pager_algo.cpp.s
+.PHONY : pager_algo.cpp.s
+
 process.o: process.cpp.o
 
 .PHONY : process.o
@@ -240,15 +267,18 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... src"
-	@echo "... Pager_Algo.o"
-	@echo "... Pager_Algo.i"
-	@echo "... Pager_Algo.s"
 	@echo "... frame.o"
 	@echo "... frame.i"
 	@echo "... frame.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... page_fault_handler.o"
+	@echo "... page_fault_handler.i"
+	@echo "... page_fault_handler.s"
+	@echo "... pager_algo.o"
+	@echo "... pager_algo.i"
+	@echo "... pager_algo.s"
 	@echo "... process.o"
 	@echo "... process.i"
 	@echo "... process.s"

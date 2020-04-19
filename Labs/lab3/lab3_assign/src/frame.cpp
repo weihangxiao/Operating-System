@@ -7,6 +7,7 @@
 frame::frame() {
     index_of_vpage = -1;
     mapped = false;
+    pid = -1; //
 }
 
 
@@ -20,6 +21,14 @@ void frame::setIndexOfVpage(int indexOfVpage) {
 
 bool frame::isMapped() const {
     return mapped;
+}
+
+int frame::getPid() const {
+    return pid;
+}
+
+void frame::setPid(int pid) {
+    frame::pid = pid;
 }
 
 void frame::setMapped(bool mapped) {

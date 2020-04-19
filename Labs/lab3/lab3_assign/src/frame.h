@@ -9,6 +9,7 @@
 class frame {
     int index_of_vpage;
     bool mapped;
+    int pid;
 
 public:
     frame();
@@ -20,6 +21,10 @@ public:
     bool isMapped() const;
 
     void setMapped(bool mapped);
+
+    int getPid() const;
+
+    void setPid(int pid);
 
 };
 

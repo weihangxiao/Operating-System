@@ -1,7 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/src.dir/Pager_Algo.cpp.o"
   "CMakeFiles/src.dir/frame.cpp.o"
   "CMakeFiles/src.dir/main.cpp.o"
+  "CMakeFiles/src.dir/page_fault_handler.cpp.o"
+  "CMakeFiles/src.dir/pager_algo.cpp.o"
   "CMakeFiles/src.dir/process.cpp.o"
   "src"
   "src.pdb"

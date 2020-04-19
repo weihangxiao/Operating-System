@@ -8,6 +8,8 @@
 
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/PTE.h
 
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
+
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/main.cpp
 iostream
 -
@@ -21,6 +23,36 @@ sstream
 -
 unistd.h
 -
+process.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.h
+frame.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
+pager_algo.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.h
+page_fault_handler.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.cpp
+string
+-
+page_fault_handler.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h
+frame.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
+process.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.h
+string.h
+-
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.h
+frame.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
+vector
+-
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.cpp
 process.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.h
 

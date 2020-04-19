@@ -83,22 +83,9 @@ CMakeFiles/src.dir/process.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/src.dir/process.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.cpp -o CMakeFiles/src.dir/process.cpp.s
 
-CMakeFiles/src.dir/Pager_Algo.cpp.o: CMakeFiles/src.dir/flags.make
-CMakeFiles/src.dir/Pager_Algo.cpp.o: ../Pager_Algo.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/src.dir/Pager_Algo.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/src.dir/Pager_Algo.cpp.o -c /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/Pager_Algo.cpp
-
-CMakeFiles/src.dir/Pager_Algo.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/src.dir/Pager_Algo.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/Pager_Algo.cpp > CMakeFiles/src.dir/Pager_Algo.cpp.i
-
-CMakeFiles/src.dir/Pager_Algo.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/src.dir/Pager_Algo.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/Pager_Algo.cpp -o CMakeFiles/src.dir/Pager_Algo.cpp.s
-
 CMakeFiles/src.dir/frame.cpp.o: CMakeFiles/src.dir/flags.make
 CMakeFiles/src.dir/frame.cpp.o: ../frame.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/src.dir/frame.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/src.dir/frame.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/src.dir/frame.cpp.o -c /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.cpp
 
 CMakeFiles/src.dir/frame.cpp.i: cmake_force
@@ -109,23 +96,51 @@ CMakeFiles/src.dir/frame.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/src.dir/frame.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.cpp -o CMakeFiles/src.dir/frame.cpp.s
 
+CMakeFiles/src.dir/pager_algo.cpp.o: CMakeFiles/src.dir/flags.make
+CMakeFiles/src.dir/pager_algo.cpp.o: ../pager_algo.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/src.dir/pager_algo.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/src.dir/pager_algo.cpp.o -c /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.cpp
+
+CMakeFiles/src.dir/pager_algo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/src.dir/pager_algo.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.cpp > CMakeFiles/src.dir/pager_algo.cpp.i
+
+CMakeFiles/src.dir/pager_algo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/src.dir/pager_algo.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.cpp -o CMakeFiles/src.dir/pager_algo.cpp.s
+
+CMakeFiles/src.dir/page_fault_handler.cpp.o: CMakeFiles/src.dir/flags.make
+CMakeFiles/src.dir/page_fault_handler.cpp.o: ../page_fault_handler.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/src.dir/page_fault_handler.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/src.dir/page_fault_handler.cpp.o -c /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.cpp
+
+CMakeFiles/src.dir/page_fault_handler.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/src.dir/page_fault_handler.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.cpp > CMakeFiles/src.dir/page_fault_handler.cpp.i
+
+CMakeFiles/src.dir/page_fault_handler.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/src.dir/page_fault_handler.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.cpp -o CMakeFiles/src.dir/page_fault_handler.cpp.s
+
 # Object files for target src
 src_OBJECTS = \
 "CMakeFiles/src.dir/main.cpp.o" \
 "CMakeFiles/src.dir/process.cpp.o" \
-"CMakeFiles/src.dir/Pager_Algo.cpp.o" \
-"CMakeFiles/src.dir/frame.cpp.o"
+"CMakeFiles/src.dir/frame.cpp.o" \
+"CMakeFiles/src.dir/pager_algo.cpp.o" \
+"CMakeFiles/src.dir/page_fault_handler.cpp.o"
 
 # External object files for target src
 src_EXTERNAL_OBJECTS =
 
 src: CMakeFiles/src.dir/main.cpp.o
 src: CMakeFiles/src.dir/process.cpp.o
-src: CMakeFiles/src.dir/Pager_Algo.cpp.o
 src: CMakeFiles/src.dir/frame.cpp.o
+src: CMakeFiles/src.dir/pager_algo.cpp.o
+src: CMakeFiles/src.dir/page_fault_handler.cpp.o
 src: CMakeFiles/src.dir/build.make
 src: CMakeFiles/src.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable src"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable src"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/src.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

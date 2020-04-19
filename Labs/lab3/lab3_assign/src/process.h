@@ -18,14 +18,12 @@ struct vma {
 
 class Process {
 private:
-    int PID;
     static const int page_table_size = 64;
-    pte_t page_table[page_table_size];
 public:
     Process(int);
-
-
+    int PID;
     vector<vma> vmas;
+    vector<pte_t> page_table;
 };
 
 

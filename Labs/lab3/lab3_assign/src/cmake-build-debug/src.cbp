@@ -83,12 +83,6 @@
 		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/PTE.h">
 			<Option target="src"/>
 		</Unit>
-		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/Pager_Algo.cpp">
-			<Option target="src"/>
-		</Unit>
-		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/Pager_Algo.h">
-			<Option target="src"/>
-		</Unit>
 		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.cpp">
 			<Option target="src"/>
 		</Unit>
@@ -96,6 +90,18 @@
 			<Option target="src"/>
 		</Unit>
 		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/main.cpp">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.cpp">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.cpp">
+			<Option target="src"/>
+		</Unit>
+		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.h">
 			<Option target="src"/>
 		</Unit>
 		<Unit filename="/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.cpp">
