@@ -28,28 +28,29 @@ int frame_num = 4;
 vector<pair<string, int>> instruct_list;
 
 vector<Process*> proc_queue;
-
+vector<int> rand_vals;
 int index_of_frametable = -1;
 int num = -1;
 
 Pager_Algo* pager;
 //frame *frame_table = new frame[4];
 vector<frame*> frame_table;
+
+int size = 0; // rand_vals size;
+
 bool parseCommand(int argc, char* argv[]) {
     int c = 0;
     int op_len;
     while ((c = getopt (argc, argv, "afo:")) != -1) {
         switch (c) {
             case 'a':
-                //algo = optarg[0];
+                algo = optarg[0];
                 break;
             case 'f':
-                //sscanf(optarg, "%d", &frame_num);
+                sscanf(optarg, "%d", &frame_num);
                 break;
             case 'o':
-                cout << "before" << endl;
                 op_len = strlen(optarg);
-                cout << "after" << endl;
                 for (int i = 0; i < op_len; i++) {
                     switch (optarg[i]) {
                         case 'O':
@@ -131,6 +132,33 @@ void parseInput(string filename) {
 //    }
 }
 
+void parseRfile(string filename) {
+    int r_number;
+    string line;
+    ifstream infile;
+    infile.open(filename);
+    getline(infile, line);
+    istringstream stream(line);
+    stream >> size;
+    if (size == 0) {
+        size = 1;
+        rand_vals.push_back(0);
+        infile.close();
+        return;
+    }
+    while (getline(infile, line)) {
+        istringstream stream(line);
+        stream >> r_number;
+        rand_vals.push_back(r_number);
+    }
+    if (rand_vals.size() == 0) {
+        rand_vals.push_back(0);
+    }
+    infile.close();
+
+}
+
+
 
 
 
@@ -150,6 +178,7 @@ bool has_free_frame() {
 //}
 
 void print_frame_table() {
+    printf("FT: ");
     for (int i = 0; i < frame_num; i++) {
         int page_index = frame_table[i]->getIndexOfVpage();
         int pid = frame_table[i]->getPid();
@@ -163,6 +192,7 @@ void print_frame_table() {
 }
 
 void print_page_table(Process* process) {
+    printf("PT[%d]: ", process->PID);
     for (int i = 0; i < process->page_table.size(); i++) {
         pte_t p = process->page_table[i];
         if (p.PRESENT) {
@@ -178,24 +208,41 @@ void print_page_table(Process* process) {
     cout << endl;
 }
 
+void initialize_algorithm() {
+    if (algo == 'f') {
+        pager = new FIFO_Pager(frame_num);
+    } else if (algo = 'r') {
+        pager = new Random_Pager(frame_num, rand_vals);
+    }
+}
+
+
 
 int main(int argc, char* argv[]) {
-    string input = argv[argc - 1];
+    string input = argv[argc - 2];
     string rfile = argv[argc - 1];
     parseCommand(argc, argv);
     parseInput(input);
-    //parseRfile(rfile);
+    parseRfile(rfile);
 
     for (int i = 0; i < frame_num; i++) {
         frame_table.push_back(new frame());
     }
 
-    pager = new FIFO_Pager(frame_num);
+    pager = new Random_Pager(frame_num, rand_vals);
+
 
     unsigned long long counter = 0;
     unsigned long long size = instruct_list.size();
+
+    unsigned long long inst_count = 0;
+    unsigned long long ctx_switches = 0;
+    unsigned long long process_exits = 0;
+    unsigned long long cost = 0;
+
     Process* current_process;
     frame* newframe;
+    page_fault_handler* handler = new page_fault_handler();
     while (counter < size) {
         string op = instruct_list[counter].first;
         int vpage = instruct_list[counter].second;
@@ -205,19 +252,24 @@ int main(int argc, char* argv[]) {
         if (op == "c") {
             current_process = proc_queue[vpage];
             counter++;
+            ctx_switches += 121;
             continue;
         }
 
+
+
         int pid = current_process->PID;
         pte_t pte = current_process->page_table[vpage];
-        page_fault_handler* handler = new page_fault_handler();
+        if (!handler->check_valid_page(current_process, vpage)) {
+            printf("SEGV\n");
+            current_process->segv++;
+            counter++;
+            continue;
+        }
+
         if (!pte.PRESENT) { //page fault exception
             //search the virtual address in the VMA list,
             // and store bits (file_mapped, write_protect) bits based on VMA
-            if (!handler->check_valid_page(current_process, vpage)) {
-                counter++;
-                continue;
-            }
 
             if (has_free_frame()) {
                 newframe = allocate_frame_from_free_list();
@@ -225,36 +277,50 @@ int main(int argc, char* argv[]) {
                 newframe = pager->select_victim_frame(frame_table);
                 index_of_frametable = pager->getIndexOfFrame();
                 int old_page_num = newframe->getIndexOfVpage();
-                handler->unmap(current_process,old_page_num);
+                int old_pid = newframe->getPid();
+                Process* old_process = proc_queue[old_pid];
+                handler->unmap(proc_queue[old_pid],old_page_num);
                 if (O) {
-                   printf("UNMAP %3d:%3d\n", pid, old_page_num);
+                   printf("UNMAP %d:%d\n", old_pid, old_page_num);
                 }
-                if (handler->isFileMapped(current_process, old_page_num)) {
-                    if (O) {
-                        printf("FOUT\n");
+                old_process->unmaps++;
+                if (handler->isModified(old_process, old_page_num)) {
+                    if (handler->isFileMapped(old_process, old_page_num)) {
+                        if (O) {
+                            printf("FOUT\n");
+                        }
+                        old_process->fouts++;
+                    } else {
+                        if (O) {
+                            printf("OUT\n");
+                        }
+                        old_process->outs++;
                     }
                 }
-                if (handler->isModified(current_process, old_page_num)) {
-                    if (O) {
-                        printf("OUT\n");
-                    }
-                }
-                handler->unModified(current_process, old_page_num);
+                handler->unModified(old_process, old_page_num);
             }
 
-            if (handler->isPageOut(current_process, vpage)) {
+            if (handler->isFileMapped(current_process, vpage)) {
+                if (O) {
+                    printf("FIN\n");
+                }
+                current_process->fins++;
+            } else if (handler->isPageOut(current_process, vpage)) {
                 if (O) {
                     printf("IN\n");
                 }
+                current_process->ins++;
             } else {
                 if (O) {
                     printf("ZERO\n");
                 }
+                current_process->zeros++;
             }
 
             if (O) {
-                printf("MAP %3d\n", index_of_frametable);
+                printf("MAP %d\n", index_of_frametable);
             }
+            current_process->maps++;
             handler->mapping(current_process, index_of_frametable, vpage);
             frame_table[index_of_frametable]->setIndexOfVpage(vpage);  // update mapping
             frame_table[index_of_frametable]->setPid(pid);
@@ -263,13 +329,46 @@ int main(int argc, char* argv[]) {
                 print_frame_table();
             }
         }
-        handler->updateBits(current_process, vpage, op);
+        //handler->updateBits(current_process, vpage, op);
+        if (op == "w") {
+            if (current_process->page_table[vpage].WRITE_PROTECT == 1) {
+                current_process->page_table[vpage].REFERENCE = 1;
+                if (O) {
+                    printf("SEGPROT\n");
+                }
+                current_process->segprot++;
+            } else {
+                current_process->page_table[vpage].MODIFIED = 1;
+                current_process->page_table[vpage].REFERENCE = 1;
+            }
+        } else if (op == "r") {
+            current_process-> page_table[vpage].REFERENCE = 1;
+        }
 
 
         if (x) {
             print_page_table(current_process);
         }
         counter++;
+    }
+
+    if (P) {
+        for (int i = 0; i < proc_queue.size(); i++) {
+            print_page_table(current_process);
+        }
+    }
+
+    if (F) {
+        print_frame_table();
+    }
+
+    for (int i = 0; i < proc_queue.size(); i++) {
+        Process* current_process = proc_queue[i];
+        printf("PROC[%d]: U=%lu M=%lu I=%lu O=%lu FI=%lu FO=%lu Z=%lu SV=%lu SP=%lu\n",
+                current_process->PID, current_process->unmaps, current_process->maps,
+                current_process->ins, current_process->outs, current_process->fins,
+                current_process->fouts, current_process->zeros, current_process->segv,
+                current_process->segprot);
     }
 
 

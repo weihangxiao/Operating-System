@@ -32,12 +32,6 @@ pager_algo.h
 page_fault_handler.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h
 
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.cpp
-string
--
-page_fault_handler.h
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h
-
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/page_fault_handler.h
 frame.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
@@ -51,10 +45,6 @@ frame.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
 vector
 -
-
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.cpp
-process.h
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.h
 
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/process.h
 vector
