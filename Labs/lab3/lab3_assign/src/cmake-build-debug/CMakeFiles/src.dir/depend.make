@@ -17,9 +17,11 @@ CMakeFiles/src.dir/page_fault_handler.cpp.o: ../page_fault_handler.cpp
 CMakeFiles/src.dir/page_fault_handler.cpp.o: ../page_fault_handler.h
 CMakeFiles/src.dir/page_fault_handler.cpp.o: ../process.h
 
+CMakeFiles/src.dir/pager_algo.cpp.o: ../PTE.h
 CMakeFiles/src.dir/pager_algo.cpp.o: ../frame.h
 CMakeFiles/src.dir/pager_algo.cpp.o: ../pager_algo.cpp
 CMakeFiles/src.dir/pager_algo.cpp.o: ../pager_algo.h
+CMakeFiles/src.dir/pager_algo.cpp.o: ../process.h
 
 CMakeFiles/src.dir/process.cpp.o: ../PTE.h
 CMakeFiles/src.dir/process.cpp.o: ../process.cpp

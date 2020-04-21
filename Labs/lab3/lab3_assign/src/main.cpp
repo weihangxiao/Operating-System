@@ -22,18 +22,17 @@ bool y = false;
 bool f = false;
 bool a = false;
 //frame number
-int frame_num = 4;
-
-//instruction vector
-vector<pair<string, int>> instruct_list;
+int frame_num = 16;
 
 vector<Process*> proc_queue;
+vector<pair<string, int>> instruct_list;
+//instruction vector
+
 vector<int> rand_vals;
 int index_of_frametable = -1;
 int num = -1;
 
 Pager_Algo* pager;
-//frame *frame_table = new frame[4];
 vector<frame*> frame_table;
 
 int size = 0; // rand_vals size;
@@ -211,8 +210,10 @@ void print_page_table(Process* process) {
 void initialize_algorithm() {
     if (algo == 'f') {
         pager = new FIFO_Pager(frame_num);
-    } else if (algo = 'r') {
+    } else if (algo == 'r') {
         pager = new Random_Pager(frame_num, rand_vals);
+    } else if (algo == 'c') {
+        pager = new Clock_Pager(frame_num);
     }
 }
 
@@ -229,7 +230,7 @@ int main(int argc, char* argv[]) {
         frame_table.push_back(new frame());
     }
 
-    pager = new Random_Pager(frame_num, rand_vals);
+    pager = new Clock_Pager(frame_num);
 
 
     unsigned long long counter = 0;
@@ -274,7 +275,7 @@ int main(int argc, char* argv[]) {
             if (has_free_frame()) {
                 newframe = allocate_frame_from_free_list();
             } else {
-                newframe = pager->select_victim_frame(frame_table);
+                newframe = pager->select_victim_frame(frame_table, proc_queue);
                 index_of_frametable = pager->getIndexOfFrame();
                 int old_page_num = newframe->getIndexOfVpage();
                 int old_pid = newframe->getPid();
