@@ -27,7 +27,6 @@ void page_fault_handler::unmap(Process* process, int index_of_page) {
 
 bool page_fault_handler::isModified(Process *process, int index_of_page) {
     if (process->page_table[index_of_page].MODIFIED == 1) {
-        process->page_table[index_of_page].PAGEDOUT = 1;
         return true;
     }
     return false;

@@ -71,49 +71,178 @@ NRU_Pager::NRU_Pager(int size) : Pager_Algo() {
     frame_size = size;
     counter = 0;
     index_of_frame = 0;
+    reset = false;
 }
 
 frame* NRU_Pager::select_victim_frame(vector<frame *> &frame_table, vector<Process*>& proc_queue) {
-    vector<vector<int>> category(4);
-    for (int i = 0; i < category.size(); i++) {
-        category.push_back(vector<int>());
-    }
-    int i;
-    for (i = 0; i < frame_table.size(); i++) {
-        int pid = frame_table[i]->getPid();
-        int index_of_page = frame_table[i]->getIndexOfVpage();
+    vector<vector<int>> category(4, vector<int>());
+    int index = counter;
+
+    while (true) {
+        int pid = frame_table[index]->getPid();
+        int index_of_page = frame_table[index]->getIndexOfVpage();
         int rbit = proc_queue[pid]->page_table[index_of_page].REFERENCE;
         int mbit = proc_queue[pid]->page_table[index_of_page].MODIFIED;
+        if (reset) {
+           //int present = proc_queue[pid]->page_table[index_of_page].PRESENT;
+           //if (present) {
+               proc_queue[pid]->page_table[index_of_page].REFERENCE = 0;
+           //}
+        }
+
         if (rbit == 0 && mbit == 0) {
-            category[0].push_back(i);
-            break;
+            category[0].push_back(index);
+            if (!reset) {
+                break; // when a frame for class-0 (R=0,M=0) is encountered, you should stop the scan
+            }
         } else if (rbit == 0 && mbit == 1) {
-            category[1].push_back(i);
+            category[1].push_back(index);
         } else if (rbit == 1 && mbit == 0) {
-            category[2].push_back(i);
+            category[2].push_back(index);
         } else {
-            category[3].push_back(i);
+            category[3].push_back(index);
+        }
+
+        index++;
+        index = index % frame_size;
+        if (index == counter) {
+            break;
         }
     }
 
+    reset = false;
     for (int i = 0; i < 4; i++) {
         if (category[i].size() > 0) {
             index_of_frame = category[i][0];
             break;
         }
     }
-
-    counter++;
-
-    if (counter == 50) {
-        counter = 0;
-
-    }
-
-
-
+    category.clear();
+    counter = index_of_frame + 1; // advance to next position of victim frame
+    counter = counter % frame_size;
+    return frame_table[index_of_frame];
 }
 
 int NRU_Pager::getIndexOfFrame() {
     return index_of_frame;
 }
+
+void NRU_Pager::needReset(bool reset) {
+    this->reset = reset;
+}
+
+//---------------------------------Aging----------------------------------
+Aging_Pager::Aging_Pager(int size) : Pager_Algo() {
+    frame_size = size;
+    counter = 0;
+    index_of_frame = 0;
+    for (int i = 0; i < frame_size; i++) {
+        bit_counter.push_back(age_bit());
+    }
+}
+
+frame* Aging_Pager::select_victim_frame(vector<frame *> &frame_table, vector<Process*>& proc_queue) {
+    for (int i = 0; i < frame_size; i++) {
+        bit_counter[i] >>= 1;
+        int pid = frame_table[i]->getPid();
+        int index_of_page = frame_table[i]->getIndexOfVpage();
+        unsigned int rbit = proc_queue[pid]->page_table[index_of_page].REFERENCE;
+        if (rbit == 1) {
+            bit_counter[i] = bit_counter[i] | 0x80000000;
+        }
+    }
+
+    int index = counter;// current position
+    unsigned int min = 0xffffffff; // max unsigned int
+    while (true) {
+        int pid = frame_table[index]->getPid();
+        int index_of_page = frame_table[index]->getIndexOfVpage();
+        if (bit_counter[index] < min) {
+            min = bit_counter[index];
+            printf("%lu ", min);
+            index_of_frame = index;
+        }
+        proc_queue[pid]->page_table[index_of_page].REFERENCE = 0;
+        index++;
+        index = index % frame_size;
+        if (index == counter) {
+            break;
+        }
+    }
+    bit_counter[index_of_frame] = 0;
+    counter = index_of_frame + 1; // advance to next position of victim frame
+    counter = counter % frame_size;
+    return frame_table[index_of_frame];
+}
+
+
+int Aging_Pager::getIndexOfFrame() {
+    return index_of_frame;
+}
+
+//---------------------Working-Set-Pager-----------------
+
+Working_Set_Pager::Working_Set_Pager(int size) : Pager_Algo() {
+    frame_size = size;
+    counter = 0;
+    index_of_frame = -1;
+    curr_time = 0;
+}
+
+frame* Working_Set_Pager::select_victim_frame(vector<frame *> &frame_table, vector<Process*>& proc_queue) {
+    int index = counter;
+    unsigned long long min = 18446744073709551615; //max value
+    int min_index = 0;
+    bool foundFrame = false;
+    while (true) {
+        int pid = frame_table[index]->getPid();
+        int index_of_page = frame_table[index]->getIndexOfVpage();
+        int last_used_time = frame_table[index]->getLastUsedTime();
+        int rbit = proc_queue[pid]->page_table[index_of_page].REFERENCE;
+        unsigned long long age = curr_time - last_used_time;
+        if (rbit == 1) {
+            frame_table[index]->setLastUsedTime(curr_time);
+            proc_queue[pid]->page_table[index_of_page].REFERENCE = 0;
+        }
+        if (rbit == 0 && age > 49){
+            index_of_frame = index;
+            foundFrame = true;
+            break;
+        }
+
+        if (frame_table[index]->getLastUsedTime() < min) {
+            min = frame_table[index]->getLastUsedTime();
+            min_index = index;
+        }
+
+
+//        if (index_of_frame != -1) { // the frame will be selected
+//            break;
+//        }
+
+        index++;
+        index = index % frame_size;
+        if (index == counter) {
+            break;
+        }
+    }
+
+    if (!foundFrame) {
+        index_of_frame = min_index;
+    }
+    counter = index_of_frame + 1; // advance to next position of victim frame
+    counter = counter % frame_size;
+    return frame_table[index_of_frame];
+
+}
+
+
+int Working_Set_Pager::getIndexOfFrame() {
+    return index_of_frame;
+}
+
+void Working_Set_Pager::setCurrTime(unsigned long long curr_time) {
+        this->curr_time = curr_time;
+}
+
+
