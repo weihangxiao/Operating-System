@@ -9,7 +9,10 @@ frame::frame() {
     mapped = false;
     pid = -1; //
     last_used_time = 0;
+    a.age = 0;
 }
+
+
 
 
 int frame::getIndexOfVpage() const {

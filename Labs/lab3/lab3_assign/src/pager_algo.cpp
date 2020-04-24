@@ -136,30 +136,43 @@ Aging_Pager::Aging_Pager(int size) : Pager_Algo() {
     frame_size = size;
     counter = 0;
     index_of_frame = 0;
-    for (int i = 0; i < frame_size; i++) {
-        bit_counter.push_back(age_bit());
-    }
+//    for (int i = 0; i < frame_size; i++) {
+//        age_bit a;
+//        a.age = 0;
+//        bit_counter.push_back(a);
+//    }
 }
 
 frame* Aging_Pager::select_victim_frame(vector<frame *> &frame_table, vector<Process*>& proc_queue) {
     for (int i = 0; i < frame_size; i++) {
-        bit_counter[i] >>= 1;
+        //bit_counter[i].age >>= 1;
+        age_bit a = frame_table[i]->a;
+        unsigned long long age = a.age;
+        age >>= 1;
         int pid = frame_table[i]->getPid();
         int index_of_page = frame_table[i]->getIndexOfVpage();
         unsigned int rbit = proc_queue[pid]->page_table[index_of_page].REFERENCE;
         if (rbit == 1) {
-            bit_counter[i] = bit_counter[i] | 0x80000000;
+            //frame_table[i]->age = frame_table[i]->age | 0x80000000;
+            age = age | 0x80000000;
+        } else {
+            //frame_table[i]->age = frame_table[i]->age | 0;
+            age = age | 0;
         }
+        frame_table[i]->a.age = age;
+
+
     }
 
     int index = counter;// current position
-    unsigned int min = 0xffffffff; // max unsigned int
+    unsigned long long min = 0xffffffffffffffff; //max value
     while (true) {
         int pid = frame_table[index]->getPid();
         int index_of_page = frame_table[index]->getIndexOfVpage();
-        if (bit_counter[index] < min) {
-            min = bit_counter[index];
-            printf("%lu ", min);
+        age_bit a = frame_table[index]->a;
+        cout << " ";
+        if (a.age < min) {
+            min = a.age;
             index_of_frame = index;
         }
         proc_queue[pid]->page_table[index_of_page].REFERENCE = 0;
@@ -169,7 +182,7 @@ frame* Aging_Pager::select_victim_frame(vector<frame *> &frame_table, vector<Pro
             break;
         }
     }
-    bit_counter[index_of_frame] = 0;
+    frame_table[index_of_frame]->a.age = 0;
     counter = index_of_frame + 1; // advance to next position of victim frame
     counter = counter % frame_size;
     return frame_table[index_of_frame];
@@ -191,7 +204,7 @@ Working_Set_Pager::Working_Set_Pager(int size) : Pager_Algo() {
 
 frame* Working_Set_Pager::select_victim_frame(vector<frame *> &frame_table, vector<Process*>& proc_queue) {
     int index = counter;
-    unsigned long long min = 18446744073709551615; //max value
+    unsigned long long min = 0xffffffffffffffff; //max value
     int min_index = 0;
     bool foundFrame = false;
     while (true) {

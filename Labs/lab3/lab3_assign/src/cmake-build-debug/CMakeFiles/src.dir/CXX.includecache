@@ -17,6 +17,8 @@ pager_algo.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/pager_algo.h
 frame.h
 /Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab3/lab3_assign/src/frame.h
+iostream
+-
 vector
 -
 process.h

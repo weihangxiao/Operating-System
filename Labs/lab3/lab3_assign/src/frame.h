@@ -6,12 +6,15 @@
 #define SRC_FRAME_H
 
 
+struct age_bit {
+    unsigned long long age: 32;
+};
+
 class frame {
     int index_of_vpage;
     bool mapped;
     int pid;
     unsigned long long last_used_time;
-
 public:
     frame();
 
@@ -30,6 +33,10 @@ public:
     unsigned long long int getLastUsedTime();
 
     void setLastUsedTime(unsigned long long int lastUsedTime);
+
+
+    age_bit a;
+
 
 };
 

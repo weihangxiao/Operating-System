@@ -328,6 +328,8 @@ int main(int argc, char* argv[]) {
                             current_process->fouts++;
                         }
                     }
+
+                    frame_table[frame_index]->a.age = 0;
                 }
                 current_process->page_table[i].PAGEDOUT = 0;
             }
@@ -469,7 +471,7 @@ int main(int argc, char* argv[]) {
 
     for (int i = 0; i < proc_queue.size(); i++) {
         Process* current_process = proc_queue[i];
-        printf("PROC[%d]: U=%lu M=%lu I=%lu O=%lu FI=%lu FO=%lu Z=%lu SV=%lu SP=%lu\n",
+        printf("PROC[%d]: U=%llu M=%llu I=%llu O=%llu FI=%llu FO=%llu Z=%llu SV=%llu SP=%llu\n",
                 current_process->PID, current_process->unmaps, current_process->maps,
                 current_process->ins, current_process->outs, current_process->fins,
                 current_process->fouts, current_process->zeros, current_process->segv,

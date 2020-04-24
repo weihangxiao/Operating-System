@@ -6,6 +6,7 @@
 #define SRC_PAGER_ALGO_H
 
 #include "frame.h"
+#include <iostream>
 #include <vector>
 #include "process.h"
 using namespace std;
@@ -71,16 +72,12 @@ public:
     void setCurrTime(unsigned long long) {}
 };
 
-struct age_bit {
-    unsigned int age: 32;
-};
 
 class Aging_Pager: public Pager_Algo {
 private:
     int frame_size;
     int counter;
     int index_of_frame;
-    vector<age_bit> bit_counter;
 public:
     Aging_Pager(int);
     frame* select_victim_frame(vector<frame*>& frame_table, vector<Process*>& proc_queue);
