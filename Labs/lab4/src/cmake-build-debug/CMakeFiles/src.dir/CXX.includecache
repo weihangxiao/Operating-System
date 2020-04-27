@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/main.cpp
+iostream
+-
+fstream
+-
+string.h
+-
+stdio.h
+-
+sstream
+-
+unistd.h
+-
+operation.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/operation.h
+vector
+-
+scheduler.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/scheduler.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/operation.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/scheduler.cpp
+scheduler.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/scheduler.h
+
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/scheduler.h
+queue
+-
+vector
+-
+operation.h
+/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab4/src/operation.h
+
