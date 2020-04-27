@@ -89,8 +89,6 @@ LOOK::LOOK(): Scheduler() {
     curr_head = 0;
     io_active = false;
     direction = 1;
-    max_track = 0;
-    min_track = 0;
     index = 0;
 }
 
@@ -109,21 +107,34 @@ operation LOOK::getOper() {
     }
 
     int diff = INT_MAX;
-    for (int i = 0; i < queue.size(); i++) {
-        operation op = queue[i];
-        if (direction == 1) {
-            if (op.track - curr_head < diff) {
+    if (direction == 1) {
+        for (int i = 0; i < queue.size(); i++) {
+            operation op = queue[i];
+            if (op.track - curr_head < diff && op.track >= curr_head) {
                 diff = op.track - curr_head;
-                index = i;
-            }
-        } else {
-            if (curr_head - op.track < diff) {
-                diff = curr_head - op.track;
                 index = i;
             }
         }
     }
 
+    if (diff == INT_MAX) {
+        direction = -1;
+    } else {
+        return queue[index];
+    }
+
+    for (int i = 0; i < queue.size(); i++) {
+        operation op = queue[i];
+        if (curr_head - op.track < diff && curr_head >= op.track) {
+            diff = curr_head - op.track;
+            index = i;
+        }
+    }
+
+    if (diff == INT_MAX) {
+        direction = 1;
+        return this->getOper();
+    }
     return queue[index];
 }
 
@@ -147,6 +158,160 @@ bool LOOK::isIoActive()  {
 void LOOK::setIoActive(bool ioActive) {
     io_active = ioActive;
 }
+
+
+//--------------------------CLOOK----------------------------
+CLOOK::CLOOK(): Scheduler() {
+    curr_head = 0;
+    io_active = false;
+    direction = 1;
+    index = 0;
+}
+
+void CLOOK::addOper(operation &op) {
+    queue.push_back(op);
+}
+
+void CLOOK::setCurrHead(int head) {
+    curr_head = head;
+}
+
+operation CLOOK::getOper() {
+    if (io_active) {
+        return queue[index];
+    }
+
+
+    int diff = INT_MAX;  //go up and find the larger track than current head
+    for (int i = 0; i < queue.size(); i++) {
+        operation op = queue[i];
+        if (op.track - curr_head < diff && op.track >= curr_head) {
+            diff = op.track - curr_head;
+            index = i;
+        }
+    }
+
+    if (diff == INT_MAX) {  // if no more larger track than current head
+        int min_head = INT_MAX;
+        for (int i = 0; i < queue.size(); i++) {
+            operation op = queue[i];
+            if (op.track < min_head) {
+                min_head = op.track;
+                index = i;
+            }
+        }
+        return queue[index];
+    }
+
+    return queue[index];
+
+}
+
+void CLOOK::setOper(int end) {
+    queue[index].end_t = end;
+}
+
+
+bool CLOOK::isEmpty() {
+    return queue.empty();
+}
+
+void CLOOK::deleteOper() {
+    queue.erase(queue.begin() + index );
+}
+
+bool CLOOK::isIoActive()  {
+    return io_active;
+}
+
+void CLOOK::setIoActive(bool ioActive) {
+    io_active = ioActive;
+}
+
+//--------------------------FLOOK----------------------------
+FLOOK::FLOOK(): Scheduler() {
+    curr_head = 0;
+    io_active = false;
+    direction = 1;
+    index = 0;
+}
+
+void FLOOK::addOper(operation &op) {
+    add_queue.push_back(op);
+}
+
+void FLOOK::setCurrHead(int head) {
+    curr_head = head;
+}
+
+operation FLOOK::getOper() {
+    if (io_active) {
+        return active_queue[index];
+    }
+    if (active_queue.empty()) {
+//        printf("add queue size: %d\n", add_queue.size());
+//        printf("activate size: %d\n", active_queue.size());
+        swap(active_queue, add_queue);
+//        printf("dd queue : %d\n", add_queue.size());
+//        printf("activate size: %d\n", active_queue.size());
+    }
+
+    int diff = INT_MAX;
+    if (direction == 1) {
+        for (int i = 0; i < active_queue.size(); i++) {
+            operation op = active_queue[i];
+            if (op.track - curr_head < diff && op.track >= curr_head) {
+                diff = op.track - curr_head;
+                index = i;
+            }
+        }
+    }
+
+    if (diff == INT_MAX) {
+        direction = -1;
+    } else {
+        return active_queue[index];
+    }
+
+    for (int i = 0; i < active_queue.size(); i++) {
+        operation op = active_queue[i];
+        if (curr_head - op.track < diff && curr_head >= op.track) {
+            diff = curr_head - op.track;
+            index = i;
+        }
+    }
+
+    if (diff == INT_MAX) {
+        direction = 1;
+        return this->getOper();
+    }
+
+    return active_queue[index];
+
+}
+
+void FLOOK::setOper(int end) {
+    active_queue[index].end_t = end;
+}
+
+
+bool FLOOK::isEmpty() {
+    return add_queue.empty() && active_queue.empty();
+}
+
+void FLOOK::deleteOper() {
+    active_queue.erase(active_queue.begin() + index );
+}
+
+bool FLOOK::isIoActive()  {
+    return io_active;
+}
+
+void FLOOK::setIoActive(bool ioActive) {
+    io_active = ioActive;
+}
+
+
 
 
 

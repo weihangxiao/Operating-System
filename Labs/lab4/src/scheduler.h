@@ -61,8 +61,6 @@ private:
     int curr_head;
     int index;
     int direction;
-    int max_track;
-    int min_track;
     bool io_active;
 public:
     LOOK();
@@ -76,6 +74,47 @@ public:
     void setIoActive(bool ioActive);
 
     vector<operation> queue;
+};
+
+class CLOOK: public Scheduler {
+private:
+    int curr_head;
+    int index;
+    int direction;
+    bool io_active;
+public:
+    CLOOK();
+    void addOper(operation &op);
+    operation getOper();
+    void deleteOper();
+    bool isEmpty();
+    void setOper(int);
+    void setCurrHead(int);
+    bool isIoActive();
+    void setIoActive(bool ioActive);
+
+    vector<operation> queue;
+};
+
+class FLOOK: public Scheduler {
+private:
+    int curr_head;
+    int index;
+    int direction;
+    bool io_active;
+public:
+    FLOOK();
+    void addOper(operation &op);
+    operation getOper();
+    void deleteOper();
+    bool isEmpty();
+    void setOper(int);
+    void setCurrHead(int);
+    bool isIoActive();
+    void setIoActive(bool ioActive);
+
+    vector<operation> add_queue;
+    vector<operation> active_queue;
 };
 
 #endif //SRC_SCHEDULER_H

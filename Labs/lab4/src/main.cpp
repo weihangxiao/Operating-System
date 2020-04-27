@@ -58,10 +58,16 @@ void parseInput(string filename) {
 }
 
 void initialize_algorithm() {
-    if (algo == 'f') {
+    if (algo == 'i') {
         scheduler = new FCFS();
     } else if (algo == 'j') {
         scheduler = new SSTF();
+    } else if (algo == 's') {
+        scheduler = new LOOK();
+    } else if (algo == 'c') {
+        scheduler = new CLOOK();
+    } else if (algo == 'f') {
+        scheduler = new FLOOK();
     }
 }
 
@@ -97,9 +103,7 @@ int main(int argc, char* argv[]) {
                        wait_time);
             }
             curr_track = op.track;
-            if (algo == 'j') {
-                scheduler->setCurrHead(curr_track);
-            }
+            scheduler->setCurrHead(curr_track);
             scheduler->deleteOper();
             io_active = false;
             scheduler->setIoActive(io_active);
