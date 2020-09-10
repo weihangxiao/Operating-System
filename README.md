@@ -1,5 +1,5 @@
 # Operating-System
-##Lab1 Linker 
+## Lab1 Linker 
 Implemented a two-pass linker. In general, a linker takes individually compiled code/object modules and creates a single executable by resolving external symbol references (e.g. variables and functions) and module relative addressing by assigning global addresses after placing the modules’ object code at global addresses.
 
 ## Lab2 Scheduler / Dispatcher
