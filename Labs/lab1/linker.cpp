@@ -59,7 +59,7 @@ Tokens getToken() {
         is.str(line);
         offset = 1;
         linenum++;
-        if (infile.eof()) {
+        if (infile.eof() && line.empty()) {  //current line is the empty and eof
             int len = lastline.length();
             Tokens t;
             t.linecount = linenum - 1;
@@ -70,22 +70,44 @@ Tokens getToken() {
             } else {
                 t.str = NO_VALUE;
             }
-
             return t;
         }
         token = strtok(&line[0], " \t\n");
 
-        if (token == NULL ) {
+        if (token == NULL && !infile.eof()) {
             newline = true;
             return getToken();
-        } else {
-            newline = false;
+        } else if (token == NULL && infile.eof()){
+            int len = line.length();
+            t.linecount = linenum;
+            t.offset = len;
+            if (complete) {
+                t.str = "EOF";
+            } else {
+                t.str = NO_VALUE;
+            }
+            return t;
         }
+
+        newline = false;
+
     } else {
         token = strtok(NULL, " \t\n");
-        if (token == NULL) {
+
+        if (token == NULL && !infile.eof()) {
             newline = true;
             return getToken();
+        } else if (token == NULL && infile.eof()){
+            int len = line.length();
+            t.linecount = linenum;
+            t.offset = len;
+
+            if (complete) {
+                t.str = "EOF";
+            } else {
+                t.str = NO_VALUE;
+            }
+            return t;
         }
     }
 
@@ -98,7 +120,6 @@ Tokens getToken() {
     t.linecount = linenum;
     t.offset = offset;
     t.str = string(token);
-    //cout << string(token) + ": " << intToString(offset) << endl;
     offset = offset + string(token).length();
     return t;
 }
@@ -201,7 +222,7 @@ void checkInst() {
     Tokens token = getToken();
     for (int i = 0; i < token.str.size(); i++) {
         if (token.str[i] < '0' || token.str[i] > '9') {
-            parseerror(token.linecount, token.offset, 0); //Addressing expected A/E/I/R
+            parseerror(token.linecount, token.offset, 0); //num expected
             exit(0);
         }
     }
@@ -272,9 +293,6 @@ void pass1(string filename) {
         complete = true;
     }
     infile.close();
-//    for (int i = 0; i < symboltable.size(); i++) {
-//        cout << symboltable[i].first << ": " << symboltable[i].second << endl;
-//    }
 
 
 
@@ -328,7 +346,7 @@ void pass2(string filename) {
 
         Tokens usetoken = readInt();
         int usecount = stoi(usetoken.str);
-        vector<pair<string, bool>> currUselist;
+        vector<pair<string, bool> > currUselist;
         for (int i = 0; i < usecount; i++) {
             string sym = readSym();
             currUselist.push_back(make_pair(sym, false));
@@ -410,6 +428,7 @@ void pass2(string filename) {
         currUselist.clear();
 
     }
+    infile.close();
     return;
 }
 
@@ -437,7 +456,9 @@ void printsymboltable() {
     map<string, int> occurance;
     for (int i = 0; i < symboltable.size(); i++) {
         string sym = symboltable[i].first;
+
         occurance[sym]++;
+
     }
 
     cout << "Symbol Table" << endl;
@@ -470,5 +491,9 @@ void parser(string filename) {
 int main(int argc, char* argv[]) {
     string fn = argv[1]; //filename
     parser(fn);
+//    ofstream myfile;
+//    myfile.open ("t2.txt");
+//    myfile << "2\n\n   x1 \n\t 3\t";
+//    myfile.close();
     return 0;
 }

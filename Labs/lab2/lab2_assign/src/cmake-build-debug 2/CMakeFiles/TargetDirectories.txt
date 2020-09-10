@@ -1,3 +1,0 @@
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/mac/Desktop/NYU/Spring_2020/Operating-System/Labs/lab2/lab2_assign/src/cmake-build-debug/CMakeFiles/src.dir

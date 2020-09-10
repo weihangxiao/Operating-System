@@ -78,11 +78,6 @@ void parseInput(string filename) {
         des->addEvent(event);
         pid++;
     }
-
-//    list<Event>::iterator it;
-//    for (it = des->eventQueue->begin(); it != des->eventQueue->end(); it++) {
-//       cout << std::to_string(it->getEvtTimestamp()) << endl;
-//    }
 }
 
 void parseRfile(string filename) {
@@ -93,10 +88,19 @@ void parseRfile(string filename) {
     getline(infile, line);
     istringstream stream(line);
     stream >> number;
+    if (number == 0) {
+        number = 1;
+        rand_vals.push_back(0);
+        infile.close();
+        return;
+    }
     while (getline(infile, line)) {
         istringstream stream(line);
         stream >> r_number;
         rand_vals.push_back(r_number);
+    }
+    if (rand_vals.size() == 0) {
+        rand_vals.push_back(0);
     }
     infile.close();
 
@@ -345,6 +349,7 @@ int main(int argc, char* argv[]) {
         }
         delete event;
         event = nullptr;
+        //cout << endl;
         //if the current process is still running
         if (curr_time >= des->getExpireTime()) {
             proc_running = false;
@@ -386,6 +391,7 @@ int main(int argc, char* argv[]) {
         }
 
         if (call_scheduler) {
+            //cout << endl;
             if (des->get_next_event_time() == curr_time) {
                 continue;
             }

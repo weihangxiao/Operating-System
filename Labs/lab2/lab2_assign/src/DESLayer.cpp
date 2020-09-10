@@ -103,8 +103,7 @@ void DESLayer::updateProcStates(Transition t, Event* e, Process* p) {
 
 int DESLayer::get_next_event_time() {
     if (eventQueue.empty()) {
-        int null;
-        return null;
+        return -1;
     }
     Event* event = eventQueue.front();
     return event->getEvtTimestamp();
